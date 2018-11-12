@@ -5,7 +5,7 @@
 
 struct listnode *hashtab[HASHTAB_SIZE];
 
-void expmod_func(unsigned long long int base, unsigned long long int exponent, unsigned long long int module, unsigned long long int *result)
+void expmod_func(unsigned long int base, unsigned long int exponent, unsigned long int module, unsigned long int *result)
 {
 	*result = 1;
 	while (exponent) {
@@ -18,7 +18,7 @@ void expmod_func(unsigned long long int base, unsigned long long int exponent, u
 	*result = *result % module;
 }
 
-void euclid(unsigned long long int a, unsigned long long int b, unsigned long long int *res)
+void euclid(unsigned long int a, unsigned long int b, unsigned long int *res)
 {
 	long int U[2] = {1, 0};
 	long int V[2] = {0, 1};
@@ -46,12 +46,12 @@ void euclid(unsigned long long int a, unsigned long long int b, unsigned long lo
 	res[2] = a;
 }
 
-void diffyhellman(unsigned long long int *K1, unsigned long long int *K2)
+void diffyhellman(unsigned long int *K1, unsigned long int *K2)
 {
 	srand(time(NULL));
-	unsigned long long int p;
-	unsigned long long int q;
-	unsigned long long int g;
+	unsigned long int p;
+	unsigned long int q;
+	unsigned long int g;
 
 	generate_prime_number(1, 1000, &q);
 	p = 2 * q + 1;
@@ -62,8 +62,8 @@ void diffyhellman(unsigned long long int *K1, unsigned long long int *K2)
 	}
 	generate_primitive_root(p, &g);
 
-	unsigned long long int a, b;
-	unsigned long long int KeyA = 0, KeyB = 0;
+	unsigned long int a, b;
+	unsigned long int KeyA = 0, KeyB = 0;
 
 	a = rand() % (1000000 - 10000) + 10000;
 	expmod_func(g, a, p, &KeyA);
@@ -74,15 +74,15 @@ void diffyhellman(unsigned long long int *K1, unsigned long long int *K2)
 	expmod_func(KeyA, b, p, &*K2);
 }
 
-void babygiant_steps(long long base, long long module, long long answer, unsigned long long int *x)
+void babygiant_steps(long long base, long long module, long long answer, unsigned long int *x)
 {
 	hashtab_init(hashtab);
 	struct listnode *node;
 	int m = sqrt(module) + 2;
 	int k = sqrt(module) + 1;
 
-	unsigned long long int *row_y = (unsigned long long int*)malloc(m + 1);
-	unsigned long long int *row_a = (unsigned long long int*)malloc(k + 1);
+	unsigned long int *row_y = (unsigned long int*)malloc(m + 1);
+	unsigned long int *row_a = (unsigned long int*)malloc(k + 1);
 
 	double time;
 	time = wtime();

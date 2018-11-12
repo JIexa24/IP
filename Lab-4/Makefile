@@ -3,7 +3,7 @@ CFLAGS = -g3 -O0 -Wall
 LIB = -lm
 INCLUDES = -I src/
 dirs = ./bin ./obj
-main_obj = ./obj/main.o ./obj/encryptolib.o ./obj/extralib.o ./obj/cryptolib.o ./obj/hashtab.o
+main_obj = ./obj/main.o ./obj/encryptolib.o ./obj/extralib.o ./obj/cryptolib.o ./obj/hashtab.o ./obj/pokerlib.o
 
 all: ./bin/main
 
@@ -28,6 +28,9 @@ $(dirs):
 
 ./obj/hashtab.o: ./src/hashtab.c
 	gcc -c ./src/hashtab.c -Wall -o ./obj/hashtab.o $(INCLUDES)
+
+./obj/pokerlib.o: ./src/pokerlib.c
+		gcc -c ./src/pokerlib.c -Wall -o ./obj/pokerlib.o $(INCLUDES)
 
 .PHONY: clean exec
 clean:

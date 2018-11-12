@@ -22,16 +22,16 @@ double wtime()
 	return (double)t.tv_sec + (double)t.tv_usec * 1E-6;
 }
 
-int test_prime_num(unsigned long long int p)
+int test_prime_num(unsigned long int p)
 {
-	unsigned long long int i = 1;
+	unsigned long int i = 1;
 
 	for (i = 2; i < sqrt(p); ++i)
 		if (p % i == 0) return 0;
 	return 1;
 }
 
-void generate_prime_number(unsigned long long int min, unsigned long long int max, unsigned long long int *p)
+void generate_prime_number(unsigned long int min, unsigned long int max, unsigned long int *p)
 {
 	*p = 1;
 	do {
@@ -39,10 +39,10 @@ void generate_prime_number(unsigned long long int min, unsigned long long int ma
 	} while (!test_prime_num(*p));
 }
 
-void generate_primitive_root(unsigned long long int	p, unsigned long long *g)
+void generate_primitive_root(unsigned long int p, unsigned long int *g)
 {
-	unsigned long long int q = (p - 1) / 2;
-	unsigned long long int res = 1;
+	unsigned long int q = (p - 1) / 2;
+	unsigned long int res = 1;
 	for (int i = 2; i < (p - 1); ++i) {
 		expmod_func(i, q, p, &res);
 		if (res != 1) {
@@ -52,9 +52,9 @@ void generate_primitive_root(unsigned long long int	p, unsigned long long *g)
 	}
 }
 
-int test_mutually_prime_num(unsigned long long int p, unsigned long long int e)
+int test_mutually_prime_num(unsigned long int p, unsigned long int e)
 {
-  unsigned long long int euclid_res[3];
+  unsigned long int euclid_res[3];
   if (p == e) return 0;
   if (p % e == 0) return 0;
   euclid(p, e, euclid_res);
@@ -62,7 +62,7 @@ int test_mutually_prime_num(unsigned long long int p, unsigned long long int e)
   return 1;
 }
 
-long int generate_mutually_prime_number(unsigned long long int e, unsigned long long int min, unsigned long long int max)
+long int generate_mutually_prime_number(unsigned long int e, unsigned long int min, unsigned long int max)
 {
     long int p = 1;
     do {

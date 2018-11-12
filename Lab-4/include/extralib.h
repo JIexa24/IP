@@ -11,13 +11,13 @@
 #include <unistd.h>
 
 void closefiles(int N, ...);
-void prime_sqrt_mod(unsigned long long int p, unsigned long long *g);
+void prime_sqrt_mod(unsigned long int p, unsigned long long *g);
 double wtime();
-int test_prime_num(unsigned long long int p);
-void generate_prime_number(unsigned long long int min, unsigned long long int max, unsigned long long int *p);
-void generate_primitive_root(unsigned long long int	p, unsigned long long *g);
-int test_mutually_prime_number(unsigned long long int p, unsigned long long int e);
-long int generate_mutually_prime_number(unsigned long long int e, unsigned long long int min, unsigned long long int max);
+int test_prime_num(unsigned long int p);
+void generate_prime_number(unsigned long int min, unsigned long int max, unsigned long int *p);
+void generate_primitive_root(unsigned long int	p, unsigned long int *g);
+int test_mutually_prime_number(unsigned long int p, unsigned long int e);
+long int generate_mutually_prime_number(unsigned long int e, unsigned long int min, unsigned long int max);
 void cleanup();
 
 #endif
