@@ -91,7 +91,7 @@ int rsa_generate()
 {
   unsigned long long int p, q, e;
   unsigned long long int eiler_res;
-  unsigned long long int d, n;
+  unsigned long long int d = 0, n;
   int fd_public, fd_private;
 
   if ((fd_public = open("./.keyrsa.pub",  O_WRONLY | O_CREAT | O_TRUNC, 0666)) == -1) {
