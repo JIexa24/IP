@@ -26,6 +26,7 @@ struct deck {
     int start_card;
 };
 
+void swap_card(unsigned long int *card_a, unsigned long int *card_b);
 void mental_poker(int n_players);
 
 #endif

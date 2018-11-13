@@ -4,6 +4,14 @@
 #include "../include/hashtab.h"
 #include "../include/pokerlib.h"
 
+void swap_card(unsigned long int *card_a, unsigned long int *card_b)
+{
+  unsigned long int tmp;
+  tmp = *card_a;
+  *card_a = *card_b;
+  *card_b = tmp;
+}
+
 void mental_poker(int n_players)
 {
   if (n_players < 3) printf("[SYSTEM]\tAmount of players are less than 3. Debug is ON\n");
@@ -31,15 +39,23 @@ void mental_poker(int n_players)
       exit(EXIT_FAILURE);
   }
   struct deck game_deck[NUMBER_CARDS];
-  int encoded_deck[NUMBER_CARDS];
+  unsigned long int encoded_deck[NUMBER_CARDS];
   for(int i = 0; i < NUMBER_CARDS; ++i) {
       fscanf(deck_file, "%s", game_deck[i].suit);
       fscanf(deck_file, "%s", game_deck[i].name);
-      game_deck[i].start_card = i + 2;
-      u[i] = i + 2;
+      game_deck[i].start_card = i + 1;
+      encoded_deck[i] = i + 1;
   }
   fclose(deck_file);
 
-  // PN
-
+  for(int i = 0; i < n_players; ++i){
+    for (int j = 0; j < NUMBER_CARDS; ++j) {
+      expmod_func(encoded_deck[j], c[i], general_p, &encoded_deck[j]);
+    }
+    int rand_card;
+    for(int j = 0; j < NUMBER_CARDS; ++j) {
+      rand_card = rand() % NUMBER_CARDS;
+      swap_card(&encoded_deck[j], &encoded_deck[rand_card]);
+    }
+  }
 }
