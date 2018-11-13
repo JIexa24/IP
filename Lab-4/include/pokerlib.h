@@ -20,14 +20,10 @@
 #define NUMBER_CARDS 52
 #define MAXINT 512000
 
-struct card {
-    char mast[10]; // Масть карты
-    char name[10];  // Ранг карты
-    unsigned long int start_card;
+struct deck {
+    char suit[10];
+    char name[10];
+    int start_card;
 };
-
-void gen_cd(unsigned long int *c, unsigned long int *d, unsigned long int p);
-void swap_card(unsigned long int *a, unsigned long int *b);
-void mental_poker(unsigned long int number_players);
 
 #endif
