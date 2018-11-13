@@ -26,4 +26,6 @@ struct deck {
     int start_card;
 };
 
+void mental_poker(int n_players);
+
 #endif
