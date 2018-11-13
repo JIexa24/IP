@@ -23,8 +23,23 @@ void mental_poker(int n_players)
 
     if (n_players < 3) printf("[DEBUG]\tFor Player %d generated:\t%lu\t%lu\n", i, c[i], d[i]);
   }
-  // P1 encode whole deck, shuffle it and send it to P2
-  // for each player repeat step 4
+
+  // P1 encode whole deck, shuffle it and send it to P2     for each player repeat step 4
+  FILE *deck_file = fopen("deck", "r");
+  if (deck_file == NULL) {
+      fprintf(stderr, "[ERROR]\tFile doesn't exist!\n");
+      exit(EXIT_FAILURE);
+  }
+  struct deck game_deck[NUMBER_CARDS];
+  int encoded_deck[NUMBER_CARDS];
+  for(int i = 0; i < NUMBER_CARDS; ++i) {
+      fscanf(deck_file, "%s", game_deck[i].suit);
+      fscanf(deck_file, "%s", game_deck[i].name);
+      game_deck[i].start_card = i + 2;
+      u[i] = i + 2;
+  }
+  fclose(deck_file);
+
   // PN
 
 }
