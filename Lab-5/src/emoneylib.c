@@ -18,7 +18,7 @@ void bank_startup()
     expmod_func(BANK.c, -1, Phi, &BANK.d);
   } while(BANK.d > 0xFFFFFF);
 
-  printf("[DEBUG]\tGenerated next values:\n");
+  printf("%s[DEBUG]%s\tGenerated next values:\n", YELLOW, RESET);
   printf("P = %lu\tQ = %lu\tN = %lu\nC = %lu\tD = %lu\n", BANK.P, BANK.Q, BANK.N, BANK.c, BANK.d);
 }
 
@@ -55,7 +55,7 @@ int initialization_transaction(int *account_state, int payment_amount)
       return 0;
     } else return 1;
   } else {
-    printf("[BANK] Wrong banknote sign!\n");
+    printf("%s[BANK]%s Wrong banknote sign!\n", RED, RESET);
     return 1;
   }
 }
