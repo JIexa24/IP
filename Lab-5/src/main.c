@@ -9,16 +9,21 @@
 #include <sys/types.h>
 #include <stdbool.h>
 
+#include "../include/extralib.h"
 #include "../include/emoneylib.h"
 
 int main(int argc, char const *argv[])
 {
+  srand(time(NULL));
   if (argc < 2) {
     fprintf(stderr, "[ERROR] Not enough arguments!\n");
     exit(EXIT_FAILURE);
   }
   int account_state = atoi(argv[1]);
   int payment_amount;
+
+  bank_startup();
+
   while (account_state > 0) {
     printf("[BANK] Enter the payment amount:\n");
     scanf("%d", &payment_amount);

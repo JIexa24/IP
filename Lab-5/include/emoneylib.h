@@ -17,11 +17,18 @@
 struct data_BANK {
     unsigned long int P;
     unsigned long int Q;
-    unsigned long int c[5];
+    unsigned long int c[3];
     unsigned long int N;
-    unsigned long int d[5];
+    unsigned long int d[3];
 } BANK;
 
+struct electronic_money {
+  unsigned long int banknote;
+  unsigned long int enc_hash;
+} EMONEY;
+
+void bank_startup();
+void oneside_encryption();
 int initialization_transaction(int *account_state, int payment_amount);
 
 #endif
