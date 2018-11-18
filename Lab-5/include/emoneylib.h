@@ -22,4 +22,6 @@ struct data_BANK {
     unsigned long int d[5];
 } BANK;
 
+int initialization_transaction(int *account_state, int payment_amount);
+
 #endif

@@ -17,5 +17,24 @@ int main(int argc, char const *argv[])
     fprintf(stderr, "[ERROR] Not enough arguments!\n");
     exit(EXIT_FAILURE);
   }
+  int account_state = atoi(argv[1]);
+  int payment_amount;
+  while (account_state > 0) {
+    printf("[BANK] Enter the payment amount:\n");
+    scanf("%d", &payment_amount);
+    if (payment_amount == 0) {
+      printf("[BANK] Recieved zero payment! Exiting now...\n");
+      break;
+    }
+    printf("[BANK] Starting transaction...\n");
+    if(!initialization_transaction(&account_state, payment_amount)) {
+      printf("[SHOP] Item was successfully purchased!\n");
+    } else {
+      printf("[SHOP] Payment rejected!\n");
+      break;
+    }
+    printf("[CUSTOMER] Current account state:\t%d\n\n", account_state);
+  }
+
   return EXIT_SUCCESS;
 }
