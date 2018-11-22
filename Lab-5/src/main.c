@@ -9,6 +9,7 @@
 #include <sys/types.h>
 #include <stdbool.h>
 
+#include "../include/colorlib.h"
 #include "../include/extralib.h"
 #include "../include/emoneylib.h"
 

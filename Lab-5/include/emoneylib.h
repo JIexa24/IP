@@ -14,11 +14,6 @@
 
 #define MAXINT 512000
 
-#define RESET   "\033[0m"
-#define RED     "\033[1;91m"
-#define GREEN   "\033[1;92m"
-#define YELLOW  "\033[1;93m"
-
 struct data_BANK {
     unsigned long int P;
     unsigned long int Q;
