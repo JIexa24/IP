@@ -9,13 +9,14 @@
 #include <sys/types.h>
 #include <stdbool.h>
 
+#include "../include/colorlib.h"
 #include "../include/pokerlib.h"
 
 int main(int argc, char const *argv[])
 {
   srand(time(NULL));
   if (argc < 2) {
-    fprintf(stderr, "[ERROR] Not enough arguments!\n");
+    fprintf(stderr, "%s[ERROR]%s Not enough arguments!\n", RED, RESET);
     exit(EXIT_FAILURE);
   }
   int n_players;

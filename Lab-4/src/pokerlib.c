@@ -1,7 +1,3 @@
-#include "../include/encryptolib.h"
-#include "../include/cryptolib.h"
-#include "../include/extralib.h"
-#include "../include/hashtab.h"
 #include "../include/pokerlib.h"
 
 void swap_card(unsigned long int *card_a, unsigned long int *card_b)
@@ -14,10 +10,10 @@ void swap_card(unsigned long int *card_a, unsigned long int *card_b)
 
 void mental_poker(int n_players)
 {
-  if (n_players < 3) printf("[SYSTEM]\tAmount of players are less than 3. Debug is ON\n");
+  if (n_players < 3) printf("%s[SYSTEM]%s\tAmount of players are less than 3. Debug is ON\n", YELLOW, RESET);
   unsigned long int general_p;
   generate_prime_number(1000, MAXINT, &general_p);
-  if(n_players < 3) printf("[DEBUG]\tGeneral P was generated:\t%lu\n", general_p);
+  if(n_players < 3) printf("%s[DEBUG]%s\tGeneral P was generated:\t%lu\n", BLUE, RESET, general_p);
 
   unsigned long int c[n_players], d[n_players], euclid_res[3];
   for (int i = 0; i < n_players; ++i) {
@@ -27,12 +23,12 @@ void mental_poker(int n_players)
       d[i] = euclid_res[1];
     } while (d[i] > 0xFFFFFF);
 
-    if (n_players < 3) printf("[DEBUG]\tFor Player %d generated:\t%lu\t%lu\n", i, c[i], d[i]);
+    if (n_players < 3) printf("%s[DEBUG]%s\tFor Player %d generated:\t%lu\t%lu\n", BLUE, RESET, i, c[i], d[i]);
   }
 
   FILE *deck_file = fopen("deck", "r");
   if (deck_file == NULL) {
-      fprintf(stderr, "[ERROR]\tFile doesn't exist!\n");
+      fprintf(stderr, "%s[ERROR]%s\tFile doesn't exist!\n", RED, RESET);
       exit(EXIT_FAILURE);
   }
   struct deck game_deck[NUMBER_CARDS];
@@ -81,7 +77,7 @@ void mental_poker(int n_players)
   }
 
 
-  printf("\n[SYSTEM] Cards on the board:\n");
+  printf("\n%s[SYSTEM]%s Cards on the board:\n", YELLOW, RESET);
   for(int j = 0, rand_card; j < 5; j++) {
     rand_card = rand() % curr_card;
     for(int k = 0; k < n_players; k++) {
@@ -89,7 +85,24 @@ void mental_poker(int n_players)
     }
     for(int k = 0; k < NUMBER_CARDS; k++) {
       if (game_deck[k].start_card == encoded_deck[rand_card]) {
-        printf("%s %s\n", game_deck[k].name, game_deck[k].suit);
+        if (!strcmp(game_deck[k].name, "jack")) {
+          printf("J ");
+        } else if (!strcmp(game_deck[k].name, "queen")) {
+          printf("Q ");
+        } else if (!strcmp(game_deck[k].name, "king")) {
+          printf("K ");
+        } else if (!strcmp(game_deck[k].name, "ace")) {
+          printf("A ");
+        } else printf("%s ", game_deck[k].name);
+        if (!strcmp(game_deck[k].suit, "clubs")) {
+          printf("%s\n", CLUB);
+        } else if (!strcmp(game_deck[k].suit, "spades")) {
+          printf("%s\n", SPADE);
+        } else if (!strcmp(game_deck[k].suit, "diamonds")) {
+          printf("%s\n", DIAMOND);
+        } else if (!strcmp(game_deck[k].suit, "hearts")) {
+          printf("%s\n", HEART);
+        }
         encoded_deck[rand_card] = encoded_deck[curr_card - 1];
         curr_card--;
         k = NUMBER_CARDS;
@@ -98,10 +111,44 @@ void mental_poker(int n_players)
   }
   printf("\n");
   for(int i = 0; i < n_players; i++) {
-    printf("Player %d:\n", i + 1);
-    printf("%s %s\n", player_hand[i][0].name, player_hand[i][0].suit);
-    printf("%s %s\n", player_hand[i][1].name, player_hand[i][1].suit);
+    printf("%s[SYSTEM]%s Player %d:\n", YELLOW, RESET, i + 1);
+    if (!strcmp(player_hand[i][0].name, "jack")) {
+      printf("J ");
+    } else if (!strcmp(player_hand[i][0].name, "queen")) {
+      printf("Q ");
+    } else if (!strcmp(player_hand[i][0].name, "king")) {
+      printf("K ");
+    } else if (!strcmp(player_hand[i][0].name, "ace")) {
+      printf("A ");
+    } else printf("%s ", player_hand[i][0].name);
+    if (!strcmp(player_hand[i][0].suit, "clubs")) {
+      printf("%s\n", CLUB);
+    } else if (!strcmp(player_hand[i][0].suit, "spades")) {
+      printf("%s\n", SPADE);
+    } else if (!strcmp(player_hand[i][0].suit, "diamonds")) {
+      printf("%s\n", DIAMOND);
+    } else if (!strcmp(player_hand[i][0].suit, "hearts")) {
+      printf("%s\n", HEART);
+    }
+    if (!strcmp(player_hand[i][1].name, "jack")) {
+      printf("J ");
+    } else if (!strcmp(player_hand[i][1].name, "queen")) {
+      printf("Q ");
+    } else if (!strcmp(player_hand[i][1].name, "king")) {
+      printf("K ");
+    } else if (!strcmp(player_hand[i][1].name, "ace")) {
+      printf("A ");
+    } else printf("%s ", player_hand[i][1].name);
+    if (!strcmp(player_hand[i][1].suit, "clubs")) {
+      printf("%s\n", CLUB);
+    } else if (!strcmp(player_hand[i][1].suit, "spades")) {
+      printf("%s\n", SPADE);
+    } else if (!strcmp(player_hand[i][1].suit, "diamonds")) {
+      printf("%s\n", DIAMOND);
+    } else if (!strcmp(player_hand[i][1].suit, "hearts")) {
+      printf("%s\n", HEART);
+    }
     printf("\n");
   }
-  printf("[SYSTEM] Widow: %lu cards\n", curr_card);
+  printf("%s[SYSTEM]%s Widow: %lu cards\n", YELLOW, RESET, curr_card);
 }

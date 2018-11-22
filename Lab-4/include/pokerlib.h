@@ -16,6 +16,7 @@
 #include "../include/cryptolib.h"
 #include "../include/extralib.h"
 #include "../include/hashtab.h"
+#include "../include/colorlib.h"
 
 #define NUMBER_CARDS 52
 #define MAXINT 512000
