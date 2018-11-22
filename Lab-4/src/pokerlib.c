@@ -1,5 +1,27 @@
 #include "../include/pokerlib.h"
 
+void print_card(char* name, char* suit)
+{
+  if (!strcmp(name, "jack")) {
+    printf("%sJ%s ", WHITE, RESET);
+  } else if (!strcmp(name, "queen")) {
+    printf("%sQ%s ", WHITE, RESET);
+  } else if (!strcmp(name, "king")) {
+    printf("%sK%s ", WHITE, RESET);
+  } else if (!strcmp(name, "ace")) {
+    printf("%sA%s ", WHITE, RESET);
+  } else printf("%s%s%s ", WHITE, name, RESET);
+  if (!strcmp(suit, "clubs")) {
+    printf("%s\n", CLUB);
+  } else if (!strcmp(suit, "spades")) {
+    printf("%s\n", SPADE);
+  } else if (!strcmp(suit, "diamonds")) {
+    printf("%s\n", DIAMOND);
+  } else if (!strcmp(suit, "hearts")) {
+    printf("%s\n", HEART);
+  }
+}
+
 void swap_card(unsigned long int *card_a, unsigned long int *card_b)
 {
   unsigned long int tmp;
@@ -85,24 +107,7 @@ void mental_poker(int n_players)
     }
     for(int k = 0; k < NUMBER_CARDS; k++) {
       if (game_deck[k].start_card == encoded_deck[rand_card]) {
-        if (!strcmp(game_deck[k].name, "jack")) {
-          printf("%sJ%s ", WHITE, RESET);
-        } else if (!strcmp(game_deck[k].name, "queen")) {
-          printf("%sQ%s ", WHITE, RESET);
-        } else if (!strcmp(game_deck[k].name, "king")) {
-          printf("%sK%s ", WHITE, RESET);
-        } else if (!strcmp(game_deck[k].name, "ace")) {
-          printf("%sA%s ", WHITE, RESET);
-        } else printf("%s%s%s ", WHITE, game_deck[k].name, RESET);
-        if (!strcmp(game_deck[k].suit, "clubs")) {
-          printf("%s\n", CLUB);
-        } else if (!strcmp(game_deck[k].suit, "spades")) {
-          printf("%s\n", SPADE);
-        } else if (!strcmp(game_deck[k].suit, "diamonds")) {
-          printf("%s\n", DIAMOND);
-        } else if (!strcmp(game_deck[k].suit, "hearts")) {
-          printf("%s\n", HEART);
-        }
+        print_card(game_deck[k].name, game_deck[k].suit);
         encoded_deck[rand_card] = encoded_deck[curr_card - 1];
         curr_card--;
         k = NUMBER_CARDS;
@@ -112,42 +117,8 @@ void mental_poker(int n_players)
   printf("\n");
   for(int i = 0; i < n_players; i++) {
     printf("%s[SYSTEM]%s %sPlayer %d:%s\n", YELLOW, RESET, WHITE, i + 1, RESET);
-    if (!strcmp(player_hand[i][0].name, "jack")) {
-      printf("%sJ%s ", WHITE, RESET);
-    } else if (!strcmp(player_hand[i][0].name, "queen")) {
-      printf("%sQ%s ", WHITE, RESET);
-    } else if (!strcmp(player_hand[i][0].name, "king")) {
-      printf("%sK%s ", WHITE, RESET);
-    } else if (!strcmp(player_hand[i][0].name, "ace")) {
-      printf("%sA%s ", WHITE, RESET);
-    } else printf("%s%s%s ", WHITE, player_hand[i][0].name, RESET);
-    if (!strcmp(player_hand[i][0].suit, "clubs")) {
-      printf("%s\n", CLUB);
-    } else if (!strcmp(player_hand[i][0].suit, "spades")) {
-      printf("%s\n", SPADE);
-    } else if (!strcmp(player_hand[i][0].suit, "diamonds")) {
-      printf("%s\n", DIAMOND);
-    } else if (!strcmp(player_hand[i][0].suit, "hearts")) {
-      printf("%s\n", HEART);
-    }
-    if (!strcmp(player_hand[i][1].name, "jack")) {
-      printf("%sJ%s ", WHITE, RESET);
-    } else if (!strcmp(player_hand[i][1].name, "queen")) {
-      printf("%sQ%s ", WHITE, RESET);
-    } else if (!strcmp(player_hand[i][1].name, "king")) {
-      printf("%sK%s ", WHITE, RESET);
-    } else if (!strcmp(player_hand[i][1].name, "ace")) {
-      printf("%sA%s ", WHITE, RESET);
-    } else printf("%s%s%s ", WHITE, player_hand[i][1].name, RESET);
-    if (!strcmp(player_hand[i][1].suit, "clubs")) {
-      printf("%s\n", CLUB);
-    } else if (!strcmp(player_hand[i][1].suit, "spades")) {
-      printf("%s\n", SPADE);
-    } else if (!strcmp(player_hand[i][1].suit, "diamonds")) {
-      printf("%s\n", DIAMOND);
-    } else if (!strcmp(player_hand[i][1].suit, "hearts")) {
-      printf("%s\n", HEART);
-    }
+    print_card(player_hand[i][0].name, player_hand[i][0].suit);
+    print_card(player_hand[i][1].name, player_hand[i][1].suit);
     printf("\n");
   }
   printf("%s[SYSTEM]%s %sWidow: %lu cards%s\n", YELLOW, RESET, WHITE, curr_card, RESET);
