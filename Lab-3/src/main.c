@@ -1,35 +1,34 @@
-#include "../include/dsignlib.h"
 #include "../include/extralib.h"
-#include "../include/md5.h"
+#include "../include/colorlib.h"
 
 int main(int argc, const char *argv[])
 {
-    char rsa[] = "./test.txt";
+    char rsa[] = "./test.jpg";
     RSA_sign(rsa);
     rsa[10] = '\0';
     if (RSA_sign_check(rsa)) {
-        printf("RSA signature result:\t[FAILED]\n");
+        printf("%sRSA%s %ssignature result:%s\t%s[FAILED]%s\n", YELLOW, RESET, WHITE, RESET, RED, RESET);
     } else {
-        printf("RSA signature result:\t[SUCCESS]\n");
+        printf("%sRSA%s %ssignature result:%s\t%s[SUCCESS]%s\n", YELLOW, RESET, WHITE, RESET, GREEN, RESET);
     }
 
-    char elg[] = "./test.txt";
+    char elg[] = "./test.jpg";
     ELG_sign(elg);
     elg[10] = '\0';
     if (ELG_sign_check(elg)) {
-        printf("ELG signature result:\t[FAILED]\n");
+        printf("%sELG%s %ssignature result:%s\t%s[FAILED]%s\n", YELLOW, RESET, WHITE, RESET, RED, RESET);
     } else {
-        printf("ELG signature result:\t[SUCCESS]\n");
+        printf("%sELG%s %ssignature result:%s\t%s[SUCCESS]%s\n", YELLOW, RESET, WHITE, RESET, GREEN, RESET);
     }
 
-    char gost[] = "./test.txt";
+    char gost[256] = "./test.jpg";
     GOST_sign(gost);
     gost[10] = '\0';
-    if (!GOST_sign_check(gost)) {
-        printf("GOST signature result:\t[FAILED]\n");
+    if (GOST_sign_check(gost)) {
+        printf("%sGOST%s %ssignature result:%s\t%s[FAILED]%s\n", YELLOW, RESET, WHITE, RESET, RED, RESET);
     } else {
-        printf("GOST signature result:\t[SUCCESS]\n");
+        printf("%sGOST%s %ssignature result:%s\t%s[SUCCESS]%s\n", YELLOW, RESET, WHITE, RESET, GREEN, RESET);
     }
 
-    return EXIT_SUCCESS;
+    return 0;
 }

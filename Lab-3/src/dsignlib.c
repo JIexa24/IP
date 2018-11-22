@@ -1,4 +1,5 @@
-#include "../include/dsignlib.h"
+#include "../include/extralib.h"
+#include "../include/md5.h"
 
 int hashMD5(FILE* input_file, MD5_CTX *md5handler)
 {
@@ -220,7 +221,7 @@ int GOST_sign(char* input_file)
     do {
         a = random() % p;
         a = expmod_func(a, q, p);
-    } while (a == 1);
+    } while (a != 1);
     x = random() % q;
     y = expmod_func(a, x, p);
 
