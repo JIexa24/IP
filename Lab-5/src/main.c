@@ -21,6 +21,7 @@ int main(int argc, char const *argv[])
     exit(EXIT_FAILURE);
   }
   int account_state = atoi(argv[1]);
+  printf("%s[CUSTOMER]%s %sStarting balance:%s\t%s%d%s\n", YELLOW, RESET, WHITE, RESET, GREEN, account_state, RESET);
   int payment_amount;
 
   bank_startup();
@@ -29,7 +30,7 @@ int main(int argc, char const *argv[])
     printf("%s[BANK]%s Enter the payment amount:\n", YELLOW, RESET);
     scanf("%d", &payment_amount);
     if (payment_amount == 0) {
-      printf("%s[BANK]%s Recieved zero payment! Exiting now...\n", YELLOW, RESET);
+      printf("%s[BANK]%s Recieved zero payment! Exiting now...\n", BLUE, RESET);
       break;
     }
     printf("%s[BANK]%s Starting transaction...\n", YELLOW, RESET);
@@ -39,7 +40,7 @@ int main(int argc, char const *argv[])
       printf("%s[SHOP]%s Payment rejected!\n", RED, RESET);
       break;
     }
-    printf("%s[CUSTOMER]%s Current account state:\t%d\n\n", YELLOW, RESET, account_state);
+    account_state == 0 ? printf("%s[CUSTOMER]%s Out of money. Exiting now...\n", GREEN, RESET) : printf("%s[CUSTOMER]%s %sCurrent account state:%s\t%s%d%s\n\n", YELLOW, RESET, WHITE, RESET, GREEN, account_state, RESET);
   }
 
   return EXIT_SUCCESS;

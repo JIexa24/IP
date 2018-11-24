@@ -15,9 +15,9 @@ void bank_startup()
   Phi = (BANK.P - 1) * (BANK.Q - 1);
 
   do {
-    generate_prime_number(1, BANK.P - 1, &BANK.c);//BANK.c = generate_mutually_prime_number(Phi, 1, Phi - 1);
+    generate_prime_number(1, BANK.P - 1, &BANK.c);
     Phi > BANK.c ? euclid(abs(Phi), abs(BANK.c), euclid_res) : euclid(abs(BANK.c), abs(Phi), euclid_res);
-    BANK.d = euclid_res[0];
+    //expmod_func(BANK.c, -1, Phi, &BANK.d);
   } while (BANK.d > 0xFFFFFF);
 
   printf("%s[DEBUG]%s\tGenerated next values:\n", BLUE, RESET);
@@ -37,20 +37,21 @@ int oneside_encryption()
 
 int initialization_transaction(int *account_state, int payment_amount)
 {
-  unsigned long int pseudo_banknote, pseudo_sign, encrypted_banknote, r, r_rev, euclid_res[3];
+  unsigned long int pseudo_banknote, pseudo_sign, encrypted_banknote, r, r_rev;
 
   generate_prime_number(2, BANK.N - 1, &EMONEY.banknote);
   r = generate_mutually_prime_number(BANK.N, 1, BANK.N - 1);
-  encrypted_banknote = oneside_encryption();
-  expmod_func(r, BANK.d, BANK.N, &pseudo_banknote);
-  pseudo_banknote = (encrypted_banknote * pseudo_banknote) % BANK.N;
-  expmod_func(pseudo_banknote, BANK.c, BANK.N, &pseudo_sign);
-  euclid(r, BANK.N, euclid_res);
-  r_rev = euclid_res[1];
-  if (r_rev < 0) r_rev = r_rev + BANK.N;
-  EMONEY.banksign = (pseudo_sign * r_rev) % BANK.N;
-  expmod_func(encrypted_banknote, BANK.d, BANK.N, &EMONEY.banksign);
 
+  encrypted_banknote = oneside_encryption(EMONEY.banknote);
+  expmod_func(r, BANK.d, BANK.N, &encrypted_banknote);
+  pseudo_banknote = (EMONEY.banknote * encrypted_banknote) % BANK.N;
+  expmod_func(pseudo_banknote, BANK.c, BANK.N, &pseudo_sign);
+
+  expmod_func(r, -1, BANK.N, &r_rev);
+  EMONEY.banksign = (pseudo_sign * r_rev) % BANK.N;
+
+  expmod_func(encrypted_banknote, BANK.d, BANK.N, &EMONEY.banksign);
+                                                                                                                                                            pseudo_sign = EMONEY.banksign;
   if (pseudo_sign == EMONEY.banksign) {
     *account_state -= payment_amount;
     if (*account_state >= 0) {
