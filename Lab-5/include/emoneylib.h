@@ -12,8 +12,6 @@
 #include <sys/types.h>
 #include <stdbool.h>
 
-#define MAXINT 512000
-
 struct data_BANK {
     unsigned long int P;
     unsigned long int Q;
