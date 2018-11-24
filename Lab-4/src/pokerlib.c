@@ -32,7 +32,15 @@ void swap_card(unsigned long int *card_a, unsigned long int *card_b)
 
 void mental_poker(int n_players)
 {
-  if (n_players < 3) printf("%s[SYSTEM]%s\tAmount of players are less than 3. Debug is ON\n", YELLOW, RESET);
+  if (n_players < 3 && n_players > 1)
+    printf("%s[SYSTEM]%s\tAmount of players are less than 3. Debug is ON\n", YELLOW, RESET);
+  else if (n_players > 23) {
+    fprintf(stderr, "%s[ERROR]%s Wrong amount of players\n", RED, RESET);
+    exit(EXIT_FAILURE);
+  } else if (n_players <= 1) {
+    fprintf(stderr, "%s[ERROR]%s There must be 2+ players!\n", RED, RESET);
+    exit(EXIT_FAILURE);
+  }
   unsigned long int general_p;
   generate_prime_number(1000, MAXINT, &general_p);
   if(n_players < 3) printf("%s[DEBUG]%s\tGeneral P was generated:\t%lu\n", BLUE, RESET, general_p);
