@@ -10,7 +10,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-#define MAXINT 512000
+#define MAXINT 128000
 
 long int vernam_encode(char* input_file);
 long int vernam_decode(char* input_file);
