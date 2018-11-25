@@ -13,6 +13,7 @@
 #include <stdbool.h>
 
 #include "../include/colorlib.h"
+#include "../include/graphlib.h"
 #include "../include/extralib.h"
 #include "../include/cryptolib.h"
 #include "../include/hashtab.h"
