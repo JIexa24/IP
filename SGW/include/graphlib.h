@@ -19,7 +19,8 @@
 #include "../include/hashtab.h"
 
 #define MAXVERTEX 1000
-#define MAXEDGE MAXVERTEX*MAXVERTEX
+#define MAXEDGE (((MAXVERTEX - 1)/2) * MAXVERTEX)
+#define _MAXEDGE(X) (((X - 1)/2) * X)
 
 struct EDGE {
   int l_vertex;
@@ -37,7 +38,10 @@ struct GRAPH {
 } GRAPH;
 
 void graph_save(int vertex_amount, int edge_amount);
-int edge_uniqueness(int vertex_amount, int edge_amount);
+void graph_sort(int edge_amount);
+void edge_swap(int a, int b);
+void vertex_swap(int* vertex_a, int* vertex_b);
+int edge_uniqueness(int generated_edge);
 int edge_generation(int vertex_amount, int edge_amount);
 int graph_generation(int vertex_amount, int edge_amount);
 

@@ -2,6 +2,7 @@
 
 int main(int argc, char const *argv[])
 {
+  srand(time(NULL));
   if (argc < 3) {
     fprintf(stderr, "%s[ERROR]%s\tNot enough arguments!\n", RED, RESET);
     exit(EXIT_FAILURE);
@@ -13,7 +14,7 @@ int main(int argc, char const *argv[])
   if (vertex_amount > MAXVERTEX) {
     fprintf(stderr, "%s[ERROR]%s\tVertexes overflow!\n", RED, RESET);
     exit(EXIT_FAILURE);
-  } else if (edge_amount > MAXEDGE) {
+  } else if (edge_amount > _MAXEDGE(vertex_amount)) {
     fprintf(stderr, "%s[ERROR]%s\tEdges overflow!\n", RED, RESET);
     exit(EXIT_FAILURE);
   } else if (edge_amount > vertex_amount*vertex_amount) {
