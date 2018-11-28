@@ -37,12 +37,15 @@ struct GRAPH {
   struct EDGE g_edge[MAXEDGE];
 } GRAPH;
 
-void graph_save(int vertex_amount, int edge_amount);
-void graph_sort(int edge_amount);
-void edge_swap(int a, int b);
-void vertex_swap(int* vertex_a, int* vertex_b);
-int edge_uniqueness(int generated_edge);
-int edge_generation(int vertex_amount, int edge_amount);
-int graph_generation(int vertex_amount, int edge_amount);
+// void graph_save(int vertex_amount, int edge_amount);
+// void graph_sort(int edge_amount);
+// void edge_swap(int a, int b);
+// void vertex_swap(int* vertex_a, int* vertex_b);
+// int edge_uniqueness(int generated_edge);
+// int edge_generation(int vertex_amount, int edge_amount);
+// int graph_generation(int vertex_amount, int edge_amount);
+
+void graph_sample(int graph_choice);
+void graph_coloring(int graph_choice);
 
 #endif
