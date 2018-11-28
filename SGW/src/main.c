@@ -20,6 +20,9 @@ int main(int argc, char const *argv[])
   } else if (edge_amount > vertex_amount*vertex_amount) {
     fprintf(stderr, "%s[ERROR]%s\tAmount of edges must be less than vertexes^2!\n", RED, RESET);
     exit(EXIT_FAILURE);
+  } else if (edge_amount < vertex_amount - 1) {
+    fprintf(stderr, "%s[ERROR]%s\t\n", RED, RESET);
+    exit(EXIT_FAILURE);
   }
 
   if(graph_generation(vertex_amount, edge_amount)) {

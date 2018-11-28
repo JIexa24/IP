@@ -37,6 +37,7 @@ struct GRAPH {
   struct EDGE g_edge[MAXEDGE];
 } GRAPH;
 
+int vertex_check_connection(struct EDGE generated_edge, int vertex_amount);
 void graph_save_graphviz(int vertex_amount, int edge_amount);
 void graph_save(int vertex_amount, int edge_amount);
 void graph_sort(int edge_amount);
