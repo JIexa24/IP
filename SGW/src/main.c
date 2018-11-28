@@ -11,17 +11,18 @@ int main(int argc, char const *argv[])
   int graph_choice = atoi(argv[1]);
   int proof_amount = atoi(argv[2]);
 
-  if (graph_choice < 1 || graph_choice > 3) {
-    fprintf(stderr, "%s[ERROR]%s Can't generate chosen graph. Set default value: %s1%s\n", RED, RESET, GREEN, RESET);
+  if (graph_choice < 1 || graph_choice > 2) {
+    fprintf(stderr, "%s[WARNING]%s\t %sChosen graph doesn't exist. Set default value:%s\t\t\t%s1%s\n", RED, RESET, WHITE, RESET, GREEN, RESET);
     graph_choice = 1;
   }
 
   if (proof_amount < 1 || proof_amount > 3) {
-    fprintf(stderr, "%s[ERROR]%s Can't request specified amount of proofs. Set default value: %s3%s\n", RED, RESET, GREEN, RESET);
+    fprintf(stderr, "%s[WARNING]%s\t %sCan't request specified amount of proofs. Set default value:%s\t%s3%s\n", RED, RESET, WHITE, RESET, GREEN, RESET);
     proof_amount = 3;
   }
 
   graph_coloring(graph_choice);
+
   // int vertex_amount = atoi(argv[1]);
   // int edge_amount = atoi(argv[2]);
   //
