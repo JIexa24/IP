@@ -1,5 +1,34 @@
 #include "../include/graphlib.h"
 
+void graph_save_graphviz(int vertex_amount, int edge_amount) {
+  FILE* graph_file;
+  char* filename = "graph.dot";
+  char* out = "graph.png";
+  char cmd[256] = "dot -Tpng ";
+  graph_file = fopen(filename,"w+");
+  if (graph_file == NULL) {
+    fprintf(stderr,"%s[ERROR]%s\tCan't open file:\t<%s>\n", RED, RESET, filename);
+    fclose (graph_file);
+    exit(EXIT_FAILURE);
+  }
+  fprintf(graph_file, "graph ipgraph {\n");
+  // print vertex config
+  for (int i = 1; i <= vertex_amount; ++i)
+    fprintf(graph_file, "%d [label=\"%d\", color=\"%s\"];\n", i, i, "black"); 
+
+  // print edges
+  for (int i = 0; i < edge_amount; ++i)
+    fprintf(graph_file, "%d -- %d [label=\"%d_%d\", color=\"%s\"]\n",
+                        GRAPH.g_edge[i].l_vertex, GRAPH.g_edge[i].r_vertex, GRAPH.g_edge[i].l_vertex, GRAPH.g_edge[i].r_vertex, "blue"); 
+
+  fprintf(graph_file, "}\n");
+  fclose (graph_file);
+  strcat(cmd, filename);
+  strcat(cmd, " -o ");
+  strcat(cmd, out);
+  system (cmd);
+}
+
 void graph_save(int vertex_amount, int edge_amount)
 {
   FILE* graph_file;
@@ -15,6 +44,7 @@ void graph_save(int vertex_amount, int edge_amount)
     fprintf(graph_file, "%d %d\n", GRAPH.g_edge[i].l_vertex, GRAPH.g_edge[i].r_vertex);
 
   fclose (graph_file);
+  graph_save_graphviz(vertex_amount, edge_amount);
 }
 
 void vertex_swap(int* vertex_a, int* vertex_b)
