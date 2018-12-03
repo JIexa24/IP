@@ -21,7 +21,7 @@ int main(int argc, char const *argv[])
     proof_amount = 3;
   }
 
-  graph_coloring(graph_choice);
+  graph_generation(graph_choice);
 
   // int vertex_amount = atoi(argv[1]);
   // int edge_amount = atoi(argv[2]);

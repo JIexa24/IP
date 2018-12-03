@@ -1,5 +1,5 @@
 #ifndef GRAPHLIB_H
-#define  GRAPHLIB_H
+#define GRAPHLIB_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,8 +23,8 @@
 #define _MAXEDGE(X) (((X - 1)/2) * X)
 
 struct EDGE {
-  int l_vertex;
-  int r_vertex;
+  struct VERTEX* l_vertex;
+  struct VERTEX* r_vertex;
 } EDGE;
 
 struct VERTEX {
@@ -40,12 +40,14 @@ struct GRAPH {
 void graph_save(int vertex_amount, int edge_amount);
 void graph_sort(int edge_amount);
 void edge_swap(int a, int b);
-void vertex_swap(int* vertex_a, int* vertex_b);
+void vertex_swap(int position);
 int edge_uniqueness(int generated_edge);
 int edge_generation(int vertex_amount, int edge_amount);
 // int graph_generation(int vertex_amount, int edge_amount);
 
+int color_uniqueness(int vertex_amount);
+void graph_coloring(int vertex_amount);
 void graph_samples(int graph_choice, int* vertex_amount, int* edge_amount);
-void graph_coloring(int graph_choice);
+void graph_generation(int graph_choice);
 
 #endif
