@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define CYAN    "\033[1;96m"
+#define PURPLE  "\033[1;95m"
 #define BLUE    "\033[1;94m"
 #define YELLOW  "\033[1;93m"
 #define GREEN   "\033[1;92m"
