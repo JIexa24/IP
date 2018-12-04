@@ -1,5 +1,34 @@
 #include "../include/graphlib.h"
 
+void graph_save_graphviz(int vertex_amount, int edge_amount) {
+  FILE* graph_file;
+  char* filename = "graph.dot";
+  char* out = "graph.png";
+  char cmd[256] = "dot -Tpng ";
+  graph_file = fopen(filename,"w+");
+  if (graph_file == NULL) {
+    fprintf(stderr,"%s[ERROR]%s\tCan't open file:\t<%s>\n", RED, RESET, filename);
+    fclose (graph_file);
+    exit(EXIT_FAILURE);
+  }
+  fprintf(graph_file, "graph ipgraph {\n");
+  // print vertex config
+  for (int i = 1; i <= vertex_amount; ++i)
+    fprintf(graph_file, "%d [label=\"%d\", color=\"%s\"];\n", i, i, "black"); 
+
+  // print edges
+  for (int i = 0; i < edge_amount; ++i)
+    fprintf(graph_file, "%d -- %d [label=\"%d_%d\", color=\"%s\"]\n",
+                        GRAPH.g_edge[i].l_vertex, GRAPH.g_edge[i].r_vertex, GRAPH.g_edge[i].l_vertex, GRAPH.g_edge[i].r_vertex, "blue"); 
+
+  fprintf(graph_file, "}\n");
+  fclose (graph_file);
+  strcat(cmd, filename);
+  strcat(cmd, " -o ");
+  strcat(cmd, out);
+  system (cmd);
+}
+
 void graph_save(int vertex_amount, int edge_amount)
 {
   FILE* graph_file;
@@ -14,7 +43,8 @@ void graph_save(int vertex_amount, int edge_amount)
   for (int i = 0; i < edge_amount; ++i)
     fprintf(graph_file, "%d %d\n", GRAPH.g_edge[i].l_vertex->number, GRAPH.g_edge[i].r_vertex->number);
 
-  fclose(graph_file);
+  fclose (graph_file);
+  graph_save_graphviz(vertex_amount, edge_amount);
 }
 
 void vertex_swap(int position)
@@ -65,13 +95,42 @@ int edge_uniqueness(int generated_edge)
   return 0;
 }
 
+static int count_disconnect_vertex = 0;
+  
+static int* connect_vertex = NULL;
+int vertex_check_connection(struct EDGE generated_edge, int vertex_amount)
+{ 
+  int c = 0;
+  int i = 0;
+  count_disconnect_vertex = 0;
+
+  if (connect_vertex[generated_edge.l_vertex - 1] == 0){
+    ++c;
+    connect_vertex[generated_edge.l_vertex - 1] = 1;
+  }
+
+  if (connect_vertex[generated_edge.r_vertex - 1] == 0){
+    ++c;
+    connect_vertex[generated_edge.r_vertex - 1] = 1;
+  }
+
+  for (i = 0; i < vertex_amount; ++i)
+    if (connect_vertex[i] == 0)
+      ++count_disconnect_vertex;
+  if (c == 0 && count_disconnect_vertex > 0)
+    return 1;
+
+  return 0;
+}
+
 int edge_generation(int vertex_amount, int edge_amount)
 {
   for (int i = 0; i < edge_amount; ++i)
     do {
-      GRAPH.g_edge[i].l_vertex = &GRAPH.g_vertex[rand() % vertex_amount];
-      GRAPH.g_edge[i].r_vertex = &GRAPH.g_vertex[rand() % vertex_amount];
-    } while(edge_uniqueness(i) || (GRAPH.g_edge[i].l_vertex->number == GRAPH.g_edge[i].r_vertex->number));
+      GRAPH.g_edge[i].l_vertex = rand() % (vertex_amount) + 1;
+      GRAPH.g_edge[i].r_vertex = rand() % (vertex_amount) + 1;
+    } while(edge_uniqueness(i) || vertex_check_connection(GRAPH.g_edge[i], vertex_amount) | (GRAPH.g_edge[i].l_vertex == GRAPH.g_edge[i].r_vertex));
+
 
   return 0;
 }
@@ -97,13 +156,13 @@ int edge_generation(int vertex_amount, int edge_amount)
 
 int color_uniqueness(int vertex_amount)
 {
-//  char* color_array[3] = {RED, GREEN, BLUE};
+  count_disconnect_vertex = vertex_amount;
+  connect_vertex = (int*)malloc(vertex_amount * sizeof(int));
   for (int i = 0; i < vertex_amount; ++i) {
-    for (int j = 0; j < vertex_amount; ++j) {
-    }
+    connect_vertex[i] = 0;
+    GRAPH.g_vertex[i].number = i + 1;
   }
-  return 0;
-}
+
 
 void graph_samples(int graph_choice, int* vertex_amount, int* edge_amount)
 {
