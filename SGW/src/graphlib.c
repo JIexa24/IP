@@ -14,12 +14,12 @@ void graph_save_graphviz(int vertex_amount, int edge_amount) {
   fprintf(graph_file, "graph ipgraph {\n");
   // print vertex config
   for (int i = 1; i <= vertex_amount; ++i)
-    fprintf(graph_file, "%d [label=\"%d\", color=\"%s\"];\n", i, i, "black"); 
+    fprintf(graph_file, "%d [label=\"%d\", color=\"%s\"];\n", i, i, GRAPH.g_vertex[i].gcolor); 
 
   // print edges
   for (int i = 0; i < edge_amount; ++i)
     fprintf(graph_file, "%d -- %d [label=\"%d_%d\", color=\"%s\"]\n",
-                        GRAPH.g_edge[i].l_vertex, GRAPH.g_edge[i].r_vertex, GRAPH.g_edge[i].l_vertex, GRAPH.g_edge[i].r_vertex, "blue"); 
+                        GRAPH.g_edge[i].l_vertex->number, GRAPH.g_edge[i].r_vertex->number, GRAPH.g_edge[i].l_vertex->number, GRAPH.g_edge[i].r_vertex->number, "orange"); 
 
   fprintf(graph_file, "}\n");
   fclose (graph_file);
@@ -50,22 +50,22 @@ void graph_save(int vertex_amount, int edge_amount)
 void vertex_swap(int position)
 {
   printf("A: %d -- %d\n", GRAPH.g_edge[position].l_vertex->number, GRAPH.g_edge[position].r_vertex->number);
-  struct EDGE temporal_edge = GRAPH.g_edge[position];
+  struct VERTEX* temporal_edge = GRAPH.g_edge[position].l_vertex;
   GRAPH.g_edge[position].l_vertex = GRAPH.g_edge[position].r_vertex;
-  GRAPH.g_edge[position].r_vertex = temporal_edge.l_vertex;
+  GRAPH.g_edge[position].r_vertex = temporal_edge;
   printf("B:  %d -- %d\n", GRAPH.g_edge[position].l_vertex->number, GRAPH.g_edge[position].r_vertex->number);
 }
 
 void edge_swap(int a, int b)
 {
-  struct VERTEX temporal_l_vertex;
-  struct VERTEX temporal_r_vertex;
-  temporal_l_vertex.number = GRAPH.g_edge[a].l_vertex->number;
-  temporal_r_vertex.number = GRAPH.g_edge[a].r_vertex->number;
-  GRAPH.g_edge[a].l_vertex->number = GRAPH.g_edge[b].l_vertex->number;
-  GRAPH.g_edge[a].r_vertex->number = GRAPH.g_edge[b].r_vertex->number;
-  GRAPH.g_edge[b].l_vertex->number = temporal_l_vertex.number;
-  GRAPH.g_edge[b].r_vertex->number = temporal_r_vertex.number;
+  struct VERTEX* temporal_l_vertex;
+  struct VERTEX* temporal_r_vertex;
+  temporal_l_vertex = GRAPH.g_edge[a].l_vertex;
+  temporal_r_vertex = GRAPH.g_edge[a].r_vertex;
+  GRAPH.g_edge[a].l_vertex = GRAPH.g_edge[b].l_vertex;
+  GRAPH.g_edge[a].r_vertex = GRAPH.g_edge[b].r_vertex;
+  GRAPH.g_edge[b].l_vertex = temporal_l_vertex;
+  GRAPH.g_edge[b].r_vertex = temporal_r_vertex;
 }
 
 void graph_sort(int edge_amount)
@@ -103,15 +103,16 @@ int vertex_check_connection(struct EDGE generated_edge, int vertex_amount)
   int c = 0;
   int i = 0;
   count_disconnect_vertex = 0;
-
-  if (connect_vertex[generated_edge.l_vertex - 1] == 0){
+  printf("chk %d-%d\n", generated_edge.l_vertex->number,generated_edge.r_vertex->number);
+ // return 0;
+  if (connect_vertex[generated_edge.l_vertex->number - 1] == 0){
     ++c;
-    connect_vertex[generated_edge.l_vertex - 1] = 1;
+    connect_vertex[generated_edge.l_vertex->number - 1] = 1;
   }
 
-  if (connect_vertex[generated_edge.r_vertex - 1] == 0){
+  if (connect_vertex[generated_edge.r_vertex->number - 1] == 0){
     ++c;
-    connect_vertex[generated_edge.r_vertex - 1] = 1;
+    connect_vertex[generated_edge.r_vertex->number - 1] = 1;
   }
 
   for (i = 0; i < vertex_amount; ++i)
@@ -125,11 +126,17 @@ int vertex_check_connection(struct EDGE generated_edge, int vertex_amount)
 
 int edge_generation(int vertex_amount, int edge_amount)
 {
+  int l;
+  int r;
   for (int i = 0; i < edge_amount; ++i)
     do {
-      GRAPH.g_edge[i].l_vertex = rand() % (vertex_amount) + 1;
-      GRAPH.g_edge[i].r_vertex = rand() % (vertex_amount) + 1;
-    } while(edge_uniqueness(i) || vertex_check_connection(GRAPH.g_edge[i], vertex_amount) | (GRAPH.g_edge[i].l_vertex == GRAPH.g_edge[i].r_vertex));
+      l = (rand() % (vertex_amount));
+      r = (rand() % (vertex_amount));
+
+      GRAPH.g_edge[i].l_vertex = &GRAPH.g_vertex[l];
+      GRAPH.g_edge[i].r_vertex = &GRAPH.g_vertex[r];
+      
+    } while(edge_uniqueness(i) || vertex_check_connection(GRAPH.g_edge[i], vertex_amount) || (GRAPH.g_edge[i].l_vertex->number == GRAPH.g_edge[i].r_vertex->number));
 
 
   return 0;
@@ -161,8 +168,10 @@ int color_uniqueness(int vertex_amount)
   for (int i = 0; i < vertex_amount; ++i) {
     connect_vertex[i] = 0;
     GRAPH.g_vertex[i].number = i + 1;
-  }
+  } 
 
+  return 0;
+}
 
 void graph_samples(int graph_choice, int* vertex_amount, int* edge_amount)
 {
@@ -170,8 +179,7 @@ void graph_samples(int graph_choice, int* vertex_amount, int* edge_amount)
     case 1:
       *vertex_amount = 5;
       *edge_amount = 4;
-      for (int i = 0; i < *vertex_amount; ++i)
-        GRAPH.g_vertex[i].number = i + 1;
+     color_uniqueness(*vertex_amount);
       for (int j = 0; j < *edge_amount; ++j) {
         GRAPH.g_edge[j].l_vertex = &GRAPH.g_vertex[j];
         GRAPH.g_edge[j].r_vertex = &GRAPH.g_vertex[j + 1];
@@ -183,8 +191,7 @@ void graph_samples(int graph_choice, int* vertex_amount, int* edge_amount)
     case 2:
       *vertex_amount = 10;
       *edge_amount = 15;
-      for (int i = 0; i < *vertex_amount; ++i)
-        GRAPH.g_vertex[i].number = i + 1;
+      color_uniqueness(*vertex_amount);
       edge_generation(*vertex_amount, *edge_amount);
       graph_sort(*edge_amount);
       for (int i = 0; i < *edge_amount; ++i) {
@@ -194,12 +201,23 @@ void graph_samples(int graph_choice, int* vertex_amount, int* edge_amount)
   }
 }
 
+char* color_array[3] = {RED, GREEN, BLUE};
 void graph_coloring(int vertex_amount)
 {
-  char* color_array[3] = {RED, GREEN, BLUE};
   for (int i = 0; i < vertex_amount; ++i) {
     int coloring_epoch = i;
-    GRAPH.g_vertex[i].color = color_array[coloring_epoch % 3];
+    int generate_color = 0;
+    generate_color = coloring_epoch % 3;
+    GRAPH.g_vertex[i].color = color_array[generate_color];
+    if (generate_color == 0) {
+      strcpy(GRAPH.g_vertex[i].gcolor, "red");
+    } else if (generate_color == 1) {
+      strcpy(GRAPH.g_vertex[i].gcolor, "green");
+    } else if (generate_color == 2) {
+      strcpy(GRAPH.g_vertex[i].gcolor, "blue");
+    } else {
+      strcpy(GRAPH.g_vertex[i].gcolor, "black");
+    }
     ++coloring_epoch;
     if (coloring_epoch > 10) {
       fprintf(stderr, "%s[ERROR]%s Can't colorized generated graph with unique colors!\n", RED, RESET);
@@ -210,13 +228,12 @@ void graph_coloring(int vertex_amount)
 
 void graph_generation(int graph_choice)
 {
+
   int vertex_amount, edge_amount;
   printf("\t%sCOLORLESS GRAPH:%s\n", CYAN, RESET);
   graph_samples(graph_choice, &vertex_amount, &edge_amount);
 
-  do {
-    graph_coloring(vertex_amount);
-  } while(color_uniqueness(vertex_amount));
+  graph_coloring(vertex_amount);
 
   printf("\t%sCOLORLED GRAPH:%s\n", CYAN, RESET);
   for (int i = 0; i < edge_amount; ++i) {

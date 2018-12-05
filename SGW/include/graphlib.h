@@ -30,6 +30,7 @@ struct EDGE {
 struct VERTEX {
   int number;
   char* color;
+  char gcolor[256];
 } VERTEX;
 
 struct GRAPH {
