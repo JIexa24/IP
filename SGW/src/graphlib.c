@@ -13,8 +13,8 @@ void graph_save_graphviz(int vertex_amount, int edge_amount) {
   }
   fprintf(graph_file, "graph ipgraph {\n");
   // print vertex config
-  for (int i = 1; i <= vertex_amount; ++i)
-    fprintf(graph_file, "%d [label=\"%d\", color=\"%s\"];\n", i, i, GRAPH.g_vertex[i].gcolor); 
+  for (int i = 0; i < vertex_amount; ++i)
+    fprintf(graph_file, "%d [label=\"%d\", color=\"%s\"];\n", i+1, i+1, GRAPH.g_vertex[i].gcolor); 
 
   // print edges
   for (int i = 0; i < edge_amount; ++i)
