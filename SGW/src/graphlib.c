@@ -161,7 +161,7 @@ int edge_generation(int vertex_amount, int edge_amount)
 //   return 0;
 // }
 
-int color_uniqueness(int vertex_amount)
+int init_check_connect(int vertex_amount)
 {
   count_disconnect_vertex = vertex_amount;
   connect_vertex = (int*)malloc(vertex_amount * sizeof(int));
@@ -179,7 +179,7 @@ void graph_samples(int graph_choice, int* vertex_amount, int* edge_amount)
     case 1:
       *vertex_amount = 5;
       *edge_amount = 4;
-     color_uniqueness(*vertex_amount);
+      init_check_connect(*vertex_amount);
       for (int j = 0; j < *edge_amount; ++j) {
         GRAPH.g_edge[j].l_vertex = &GRAPH.g_vertex[j];
         GRAPH.g_edge[j].r_vertex = &GRAPH.g_vertex[j + 1];
@@ -191,7 +191,7 @@ void graph_samples(int graph_choice, int* vertex_amount, int* edge_amount)
     case 2:
       *vertex_amount = 10;
       *edge_amount = 15;
-      color_uniqueness(*vertex_amount);
+      init_check_connect(*vertex_amount);
       edge_generation(*vertex_amount, *edge_amount);
       graph_sort(*edge_amount);
       for (int i = 0; i < *edge_amount; ++i) {

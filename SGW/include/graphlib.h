@@ -48,7 +48,7 @@ int edge_uniqueness(int generated_edge);
 int edge_generation(int vertex_amount, int edge_amount);
 // int graph_generation(int vertex_amount, int edge_amount);
 
-int color_uniqueness(int vertex_amount);
+int init_check_connect(int vertex_amount);
 void graph_coloring(int vertex_amount);
 void graph_samples(int graph_choice, int* vertex_amount, int* edge_amount);
 void graph_generation(int graph_choice);
