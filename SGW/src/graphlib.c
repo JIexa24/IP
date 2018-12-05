@@ -49,11 +49,11 @@ void graph_save(int vertex_amount, int edge_amount)
 
 void vertex_swap(int position)
 {
-  printf("A: %d -- %d\n", GRAPH.g_edge[position].l_vertex->number, GRAPH.g_edge[position].r_vertex->number);
+//  printf("A: %d -- %d\n", GRAPH.g_edge[position].l_vertex->number, GRAPH.g_edge[position].r_vertex->number);
   struct VERTEX* temporal_edge = GRAPH.g_edge[position].l_vertex;
   GRAPH.g_edge[position].l_vertex = GRAPH.g_edge[position].r_vertex;
   GRAPH.g_edge[position].r_vertex = temporal_edge;
-  printf("B:  %d -- %d\n", GRAPH.g_edge[position].l_vertex->number, GRAPH.g_edge[position].r_vertex->number);
+//  printf("B:  %d -- %d\n", GRAPH.g_edge[position].l_vertex->number, GRAPH.g_edge[position].r_vertex->number);
 }
 
 void edge_swap(int a, int b)
@@ -103,7 +103,7 @@ int vertex_check_connection(struct EDGE generated_edge, int vertex_amount)
   int c = 0;
   int i = 0;
   count_disconnect_vertex = 0;
-  printf("chk %d-%d\n", generated_edge.l_vertex->number,generated_edge.r_vertex->number);
+ // printf("chk %d-%d\n", generated_edge.l_vertex->number,generated_edge.r_vertex->number);
  // return 0;
   if (connect_vertex[generated_edge.l_vertex->number - 1] == 0){
     ++c;
