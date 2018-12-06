@@ -167,7 +167,6 @@ int init_check_connect(int vertex_amount)
   connect_vertex = (int*)malloc(vertex_amount * sizeof(int));
   for (int i = 0; i < vertex_amount; ++i) {
     connect_vertex[i] = 0;
-    GRAPH.g_vertex[i].number = i + 1;
   } 
 
   return 0;
@@ -180,6 +179,7 @@ void graph_samples(int graph_choice, int* vertex_amount, int* edge_amount)
       *vertex_amount = 5;
       *edge_amount = 4;
       init_check_connect(*vertex_amount);
+      init_graph(*edge_amount, *vertex_amount);
       for (int j = 0; j < *edge_amount; ++j) {
         GRAPH.g_edge[j].l_vertex = &GRAPH.g_vertex[j];
         GRAPH.g_edge[j].r_vertex = &GRAPH.g_vertex[j + 1];
@@ -192,6 +192,7 @@ void graph_samples(int graph_choice, int* vertex_amount, int* edge_amount)
       *vertex_amount = 10;
       *edge_amount = 15;
       init_check_connect(*vertex_amount);
+      init_graph(*edge_amount, *vertex_amount);
       edge_generation(*vertex_amount, *edge_amount);
       graph_sort(*edge_amount);
       for (int i = 0; i < *edge_amount; ++i) {
@@ -200,30 +201,107 @@ void graph_samples(int graph_choice, int* vertex_amount, int* edge_amount)
       return;
   }
 }
+void init_graph(int edge_amount, int vertex_amount) {
+  int i = 0;
+  for (i = 0; i < edge_amount; ++i) {
+    GRAPH.g_edge[i].l_vertex = NULL;
+    GRAPH.g_edge[i].r_vertex = NULL;
+  }
+  for (i = 0; i < vertex_amount; ++i) {
+    GRAPH.g_vertex[i].number = i + 1;
+    GRAPH.g_vertex[i].gcolor[0] = '\0';
+    GRAPH.g_vertex[i].color = 3;//black
+  }
+}
 
-char* color_array[3] = {RED, GREEN, BLUE};
-void graph_coloring(int vertex_amount)
+static int count_not_colored_vertex = 0;
+static int* colored_vertex = NULL;
+int init_color(int vertex_amount)
 {
+  count_not_colored_vertex = vertex_amount;
+  colored_vertex = (int*)malloc(vertex_amount * sizeof(int));
   for (int i = 0; i < vertex_amount; ++i) {
-    int coloring_epoch = i;
-    int generate_color = 0;
-    generate_color = coloring_epoch % 3;
-    GRAPH.g_vertex[i].color = color_array[generate_color];
-    if (generate_color == 0) {
+    colored_vertex[i] = 0;
+  } 
+
+  return 0;
+}
+char* color_array[4] = {RED, GREEN, BLUE, RESET};
+int graph_coloring(int vertex_amount,int edge_amount, int cur_vertex)
+{
+  int i = 0;
+  int j = 0;
+  int color_mask = 0x7; // 111
+  count_disconnect_vertex = 0;
+  int error = 0;
+  for (i = cur_vertex; i < vertex_amount; ++i) {
+    color_mask = 0x7;
+    for (j = 0; j < edge_amount; ++j) { 
+      if (GRAPH.g_edge[j].l_vertex->number == GRAPH.g_vertex[i].number) {
+        if (GRAPH.g_edge[j].r_vertex->color == 0) { // red
+          color_mask = color_mask & 0x6;
+        } else if (GRAPH.g_edge[j].r_vertex->color == 1) { // green
+          color_mask = color_mask & 0x5;
+        } else if (GRAPH.g_edge[j].r_vertex->color == 2) { // blue
+          color_mask = color_mask & 0x3;
+        } else { // black
+          color_mask = color_mask & 0x7;
+        }
+      }
+      if (GRAPH.g_edge[j].r_vertex->number == GRAPH.g_vertex[i].number) {
+        if (GRAPH.g_edge[j].l_vertex->color == 0) { // red
+          color_mask = color_mask & 0x6;
+        } else if (GRAPH.g_edge[j].l_vertex->color == 1) { // green
+          color_mask = color_mask & 0x5;
+        } else if (GRAPH.g_edge[j].l_vertex->color == 2) { // blue
+          color_mask = color_mask & 0x3;
+        } else { // black
+          color_mask = color_mask & 0x7;
+        }
+
+      }
+    }
+    switch(color_mask) {
+      case 0x1: // 001
+        GRAPH.g_vertex[i].color = 0;
+      break;
+
+      case 0x2: // 010
+        GRAPH.g_vertex[i].color = 1;
+      break;
+
+      case 0x4: // 100
+        GRAPH.g_vertex[i].color = 2;
+      break;
+
+      case 0x3: // 011
+        GRAPH.g_vertex[i].color = 0;
+      break;
+
+      case 0x5: // 101
+        GRAPH.g_vertex[i].color = 0;
+      break;
+
+      case 0x6: // 110
+        GRAPH.g_vertex[i].color = 1;
+      break;
+
+      case 0x7: // 111
+        GRAPH.g_vertex[i].color = 0;
+      break;
+      default: error = error | 1; break;
+    }
+    if (GRAPH.g_vertex[i].color == 0) {
       strcpy(GRAPH.g_vertex[i].gcolor, "red");
-    } else if (generate_color == 1) {
+    } else if (GRAPH.g_vertex[i].color == 1) {
       strcpy(GRAPH.g_vertex[i].gcolor, "green");
-    } else if (generate_color == 2) {
+    } else if (GRAPH.g_vertex[i].color == 2) {
       strcpy(GRAPH.g_vertex[i].gcolor, "blue");
     } else {
       strcpy(GRAPH.g_vertex[i].gcolor, "black");
     }
-    ++coloring_epoch;
-    if (coloring_epoch > 10) {
-      fprintf(stderr, "%s[ERROR]%s Can't colorized generated graph with unique colors!\n", RED, RESET);
-      return;
-    }
   }
+  return error;
 }
 
 void graph_generation(int graph_choice)
@@ -232,12 +310,15 @@ void graph_generation(int graph_choice)
   int vertex_amount, edge_amount;
   printf("\t%sCOLORLESS GRAPH:%s\n", CYAN, RESET);
   graph_samples(graph_choice, &vertex_amount, &edge_amount);
-
-  graph_coloring(vertex_amount);
+//  init_color(vertex_amount,edge_amount);
+  if (graph_coloring(vertex_amount,edge_amount, 0)) {
+    printf("%s[ERROR]%s:\t GRAPH is invalid!\n", RED, RESET);
+    exit(EXIT_FAILURE);
+  }
 
   printf("\t%sCOLORLED GRAPH:%s\n", CYAN, RESET);
   for (int i = 0; i < edge_amount; ++i) {
-    printf("%sEDGE #%d:%s\t%s%d%s--%s%d%s\n", YELLOW, i, RESET, GRAPH.g_edge[i].l_vertex->color, GRAPH.g_edge[i].l_vertex->number, RESET, GRAPH.g_edge[i].r_vertex->color, GRAPH.g_edge[i].r_vertex->number, RESET);
+    printf("%sEDGE #%d:%s\t%s%d%s--%s%d%s\n", YELLOW, i, RESET, color_array[GRAPH.g_edge[i].l_vertex->color], GRAPH.g_edge[i].l_vertex->number, RESET,  color_array[GRAPH.g_edge[i].r_vertex->color], GRAPH.g_edge[i].r_vertex->number, RESET);
   }
   graph_save(vertex_amount, edge_amount);
 }
