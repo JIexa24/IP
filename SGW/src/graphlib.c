@@ -313,6 +313,7 @@ void graph_generation(int graph_choice)
 //  init_color(vertex_amount,edge_amount);
   if (graph_coloring(vertex_amount,edge_amount, 0)) {
     printf("%s[ERROR]%s:\t GRAPH is invalid!\n", RED, RESET);
+    graph_save(vertex_amount, edge_amount);
     exit(EXIT_FAILURE);
   }
 
