@@ -8,7 +8,6 @@ void graph_save_graphviz(int vertex_amount, int edge_amount) {
   graph_file = fopen(filename,"w+");
   if (graph_file == NULL) {
     fprintf(stderr,"%s[ERROR]%s\tCan't open file:\t<%s>\n", RED, RESET, filename);
-    fclose (graph_file);
     exit(EXIT_FAILURE);
   }
   fprintf(graph_file, "graph ipgraph {\n");
@@ -36,7 +35,6 @@ void graph_save(int vertex_amount, int edge_amount)
   graph_file = fopen(filename,"w+");
   if (graph_file == NULL) {
     fprintf(stderr,"%s[ERROR]%s\tCan't open file:\t<%s>\n", RED, RESET, filename);
-    fclose(graph_file);
     exit(EXIT_FAILURE);
   }
   fprintf(graph_file, "%d %d\n", vertex_amount, edge_amount);
@@ -199,8 +197,69 @@ void graph_samples(int graph_choice, int* vertex_amount, int* edge_amount)
         printf("%sEDGE #%d:%s\t%s%d--%d%s\n", YELLOW, i, RESET, WHITE,GRAPH.g_edge[i].l_vertex->number, GRAPH.g_edge[i].r_vertex->number, RESET);
       }
       return;
+    case 3:
+      *vertex_amount = 10;
+      *edge_amount = 15;
+      init_check_connect(*vertex_amount);
+      read_graph(edge_amount, vertex_amount);
+      graph_sort(*edge_amount);
+      for (int i = 0; i < *edge_amount; ++i) {
+        printf("%sEDGE #%d:%s\t%s%d--%d%s\n", YELLOW, i, RESET, WHITE,GRAPH.g_edge[i].l_vertex->number, GRAPH.g_edge[i].r_vertex->number, RESET);
+      }
+      return;
   }
 }
+
+void read_graph(int* edge_amount, int* vertex_amount) {
+  FILE* graph_file;
+  char* filename = "graph.txt";
+  graph_file = fopen(filename,"r");
+  int _vertex_amount = 0; 
+  int _edge_amount = 0;
+  int l = 0;
+  int r = 0;
+  if (graph_file == NULL) {
+    fprintf(stderr,"%s[ERROR]%s\tCan't open file:\t<%s>\n", RED, RESET, filename);
+    exit(EXIT_FAILURE);
+  }
+  fscanf(graph_file, "%d", &_vertex_amount);
+  fscanf(graph_file, "%d", &_edge_amount);
+  if (_vertex_amount > MAXVERTEX) {
+    fprintf(stderr, "%s[ERROR]%s\tVertexes overflow!\n", RED, RESET);
+    exit(EXIT_FAILURE);
+  } else if (_edge_amount > _MAXEDGE(_vertex_amount)) {
+    fprintf(stderr, "%s[ERROR]%s\tEdges overflow!\n", RED, RESET);
+    exit(EXIT_FAILURE);
+  } else if (_edge_amount > _vertex_amount*_vertex_amount) {
+    fprintf(stderr, "%s[ERROR]%s\tAmount of edges must be less than vertexes^2!\n", RED, RESET);
+    exit(EXIT_FAILURE);
+  }
+  init_graph(_edge_amount, _vertex_amount);
+  for (int i = 0; i < _edge_amount; ++i) {
+
+    fscanf(graph_file, "%d", &l);
+    fscanf(graph_file, "%d", &r);
+    GRAPH.g_edge[i].l_vertex = &GRAPH.g_vertex[search_vertex(l, _vertex_amount)];
+    GRAPH.g_edge[i].r_vertex = &GRAPH.g_vertex[search_vertex(r, _vertex_amount)];      
+    if(edge_uniqueness(i) || vertex_check_connection(GRAPH.g_edge[i], _vertex_amount) || (GRAPH.g_edge[i].l_vertex->number == GRAPH.g_edge[i].r_vertex->number)) {
+      fprintf(stderr,"%s[ERROR]%s\tEdge %d -- %d\n", RED, RESET, l,r);
+      exit(EXIT_FAILURE);
+    }
+  }
+  *vertex_amount = _vertex_amount;
+  *edge_amount = _edge_amount;
+}
+
+int search_vertex(int v, int vertex_amount) {
+int i = 0;
+  for (i = 0; i < vertex_amount; ++i) {
+    if (GRAPH.g_vertex[i].number == v)
+      return i;
+  }
+  fprintf(stderr,"%s[ERROR]%s\tVertex %d not found!\n", RED, RESET, v);
+  exit(EXIT_FAILURE);
+}
+
 void init_graph(int edge_amount, int vertex_amount) {
   int i = 0;
   for (i = 0; i < edge_amount; ++i) {
