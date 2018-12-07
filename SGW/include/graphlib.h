@@ -55,5 +55,5 @@ int graph_coloring(int vertex_amount, int edge_amount,int cur_vertex);
 void graph_samples(int graph_choice, int* vertex_amount, int* edge_amount);
 void graph_generation(int graph_choice);
 int search_vertex(int v, int vertex_amount);
-void read_graph(int* edge_amount, int* vertex_amount);
+void read_graph(int* edge_amount, int* vertex_amount, char* filename);
 #endif

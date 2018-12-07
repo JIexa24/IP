@@ -116,6 +116,7 @@ int vertex_check_connection(struct EDGE generated_edge, int vertex_amount)
   for (i = 0; i < vertex_amount; ++i)
     if (connect_vertex[i] == 0)
       ++count_disconnect_vertex;
+
   if (c == 0 && count_disconnect_vertex > 0)
     return 1;
 
@@ -201,7 +202,7 @@ void graph_samples(int graph_choice, int* vertex_amount, int* edge_amount)
       *vertex_amount = 10;
       *edge_amount = 15;
       init_check_connect(*vertex_amount);
-      read_graph(edge_amount, vertex_amount);
+      read_graph(edge_amount, vertex_amount, "graph.txt");
       graph_sort(*edge_amount);
       for (int i = 0; i < *edge_amount; ++i) {
         printf("%sEDGE #%d:%s\t%s%d--%d%s\n", YELLOW, i, RESET, WHITE,GRAPH.g_edge[i].l_vertex->number, GRAPH.g_edge[i].r_vertex->number, RESET);
@@ -210,14 +211,14 @@ void graph_samples(int graph_choice, int* vertex_amount, int* edge_amount)
   }
 }
 
-void read_graph(int* edge_amount, int* vertex_amount) {
+void read_graph(int* edge_amount, int* vertex_amount, char* filename) {
   FILE* graph_file;
-  char* filename = "graph.txt";
   graph_file = fopen(filename,"r");
   int _vertex_amount = 0; 
   int _edge_amount = 0;
   int l = 0;
   int r = 0;
+  int i = 0;
   if (graph_file == NULL) {
     fprintf(stderr,"%s[ERROR]%s\tCan't open file:\t<%s>\n", RED, RESET, filename);
     exit(EXIT_FAILURE);
@@ -235,16 +236,25 @@ void read_graph(int* edge_amount, int* vertex_amount) {
     exit(EXIT_FAILURE);
   }
   init_graph(_edge_amount, _vertex_amount);
-  for (int i = 0; i < _edge_amount; ++i) {
+  for (i = 0; i < _edge_amount; ++i) {
 
     fscanf(graph_file, "%d", &l);
     fscanf(graph_file, "%d", &r);
     GRAPH.g_edge[i].l_vertex = &GRAPH.g_vertex[search_vertex(l, _vertex_amount)];
     GRAPH.g_edge[i].r_vertex = &GRAPH.g_vertex[search_vertex(r, _vertex_amount)];      
-    if(edge_uniqueness(i) || vertex_check_connection(GRAPH.g_edge[i], _vertex_amount) || (GRAPH.g_edge[i].l_vertex->number == GRAPH.g_edge[i].r_vertex->number)) {
+    vertex_check_connection(GRAPH.g_edge[i], _vertex_amount);
+    if(edge_uniqueness(i) || (GRAPH.g_edge[i].l_vertex->number == GRAPH.g_edge[i].r_vertex->number)) {
       fprintf(stderr,"%s[ERROR]%s\tEdge %d -- %d\n", RED, RESET, l,r);
       exit(EXIT_FAILURE);
     }
+  }
+  count_disconnect_vertex = 0;
+  for (i = 0; i < _vertex_amount; ++i)
+    if (connect_vertex[i] == 0)
+      ++count_disconnect_vertex;
+  if (count_disconnect_vertex > 0) {
+    fprintf(stderr,"%s[ERROR]%s\t\n", RED, RESET);
+    exit(EXIT_FAILURE);
   }
   *vertex_amount = _vertex_amount;
   *edge_amount = _edge_amount;
