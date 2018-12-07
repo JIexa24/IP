@@ -105,27 +105,45 @@ int vertex_check_connection(struct EDGE generated_edge, int vertex_amount)
  // printf("chk %d-%d\n", generated_edge.l_vertex->number,generated_edge.r_vertex->number);
  // return 0;
   if (connect_vertex[generated_edge.l_vertex->number - 1] == 0){
-    ++c;
-    connect_vertex[generated_edge.l_vertex->number - 1] = 1;
+    c |= 0x1;
+//    connect_vertex[generated_edge.l_vertex->number - 1] = 1;
   }
 
   if (connect_vertex[generated_edge.r_vertex->number - 1] == 0){
-    ++c;
-    connect_vertex[generated_edge.r_vertex->number - 1] = 1;
+    c |= 0x2;
+//    connect_vertex[generated_edge.r_vertex->number - 1] = 1;
   }
-
+//  printf("%d %d\n",c, flag_two_vertex);
   for (i = 0; i < vertex_amount; ++i)
     if (connect_vertex[i] == 0)
       ++count_disconnect_vertex;
-  printf("%d\n", c);
-  if (c == 2) {
+  if (c == 0x3) {
     if (flag_two_vertex == 0) flag_two_vertex = 1;
-    else return 2;
+    else {  printf("return 2!!!!!\n");return 2;}
   }
-  if (c == 0 && count_disconnect_vertex > 0)
+  if (c == 0x0 && count_disconnect_vertex > 0)
     return 1;
-
+  if ((c & 0x1) > 0) connect_vertex[generated_edge.l_vertex->number - 1] = 1;
+  if ((c & 0x2) > 0) connect_vertex[generated_edge.r_vertex->number - 1] = 1;
   return 0;
+}
+
+int vertex_check_connection_s(int curr_v, int edge_amount, int vertex_amount)
+{ 
+  int i = 0;
+  count_disconnect_vertex = 0;
+  for (i = 0; i < edge_amount; ++i) {
+    if (GRAPH.g_edge[i].l_vertex->number == GRAPH.g_vertex[curr_v].number) {
+      connect_vertex[GRAPH.g_edge[i].l_vertex->number - 1] = 1;
+      connect_vertex[GRAPH.g_edge[i].r_vertex->number - 1] = 1;
+      vertex_check_connection_s(GRAPH.g_edge[i].r_vertex->number - 1, edge_amount, vertex_amount);
+    }
+  }
+  for (i = 0; i < vertex_amount; ++i) {
+    if (connect_vertex[i] == 0)
+      ++count_disconnect_vertex;
+  }
+  return count_disconnect_vertex;
 }
 
 int edge_generation(int vertex_amount, int edge_amount)
@@ -140,7 +158,7 @@ int edge_generation(int vertex_amount, int edge_amount)
       GRAPH.g_edge[i].l_vertex = &GRAPH.g_vertex[l];
       GRAPH.g_edge[i].r_vertex = &GRAPH.g_vertex[r];
       
-    } while(edge_uniqueness(i) || vertex_check_connection(GRAPH.g_edge[i], vertex_amount) || (GRAPH.g_edge[i].l_vertex->number == GRAPH.g_edge[i].r_vertex->number));
+    } while(edge_uniqueness(i) || (GRAPH.g_edge[i].l_vertex->number == GRAPH.g_edge[i].r_vertex->number) || (vertex_check_connection(GRAPH.g_edge[i], vertex_amount) > 0));
 
 
   return 0;
@@ -246,22 +264,16 @@ void read_graph(int* edge_amount, int* vertex_amount, char* filename) {
     fscanf(graph_file, "%d", &l);
     fscanf(graph_file, "%d", &r);
     GRAPH.g_edge[i].l_vertex = &GRAPH.g_vertex[search_vertex(l, _vertex_amount)];
-    GRAPH.g_edge[i].r_vertex = &GRAPH.g_vertex[search_vertex(r, _vertex_amount)];      
-    if (vertex_check_connection(GRAPH.g_edge[i], _vertex_amount) == 2) {
-      printf("%s[ERROR]%s:\t GRAPH is invalid!\n", RED, RESET);
-      exit(EXIT_FAILURE);
-    }
+    GRAPH.g_edge[i].r_vertex = &GRAPH.g_vertex[search_vertex(r, _vertex_amount)]; 
+
     if(edge_uniqueness(i) || (GRAPH.g_edge[i].l_vertex->number == GRAPH.g_edge[i].r_vertex->number)) {
       fprintf(stderr,"%s[ERROR]%s\tEdge %d -- %d\n", RED, RESET, l,r);
       exit(EXIT_FAILURE);
     }
   }
-  count_disconnect_vertex = 0;
-  for (i = 0; i < _vertex_amount; ++i)
-    if (connect_vertex[i] == 0)
-      ++count_disconnect_vertex;
-  if (count_disconnect_vertex > 0) {
-    fprintf(stderr,"%s[ERROR]%s\t\n", RED, RESET);
+     
+  if (vertex_check_connection_s(0, _edge_amount, _vertex_amount) == 1) {
+    printf("%s[ERROR]%s:\t GRAPH is invalid!\n", RED, RESET);
     exit(EXIT_FAILURE);
   }
   *vertex_amount = _vertex_amount;
@@ -311,6 +323,7 @@ int graph_coloring(int vertex_amount,int edge_amount, int cur_vertex)
   int color_mask = 0x7; // 111
   count_disconnect_vertex = 0;
   int error = 0;
+  int result_coloring = 1;
   for (i = cur_vertex; i < vertex_amount; ++i) {
     color_mask = 0x7;
     for (j = 0; j < edge_amount; ++j) { 
@@ -353,18 +366,45 @@ int graph_coloring(int vertex_amount,int edge_amount, int cur_vertex)
 
       case 0x3: // 011
         GRAPH.g_vertex[i].color = 0;
+        result_coloring &= graph_coloring(vertex_amount,  edge_amount, i + 1);
+        if (!result_coloring)  break;
+        GRAPH.g_vertex[i].color = 1;
+        result_coloring &= graph_coloring(vertex_amount,  edge_amount, i + 1);
+        if (!result_coloring)  break;
+        error = error | 1;
       break;
 
       case 0x5: // 101
         GRAPH.g_vertex[i].color = 0;
+        result_coloring &= graph_coloring(vertex_amount,  edge_amount, i + 1);
+        if (!result_coloring) break;
+        GRAPH.g_vertex[i].color = 2;
+        result_coloring &= graph_coloring(vertex_amount,  edge_amount, i + 1);
+        if (!result_coloring) break;
+        error = error | 1;
       break;
 
       case 0x6: // 110
         GRAPH.g_vertex[i].color = 1;
+        result_coloring &= graph_coloring(vertex_amount,  edge_amount, i + 1);
+        if (!result_coloring) break;
+        GRAPH.g_vertex[i].color = 2;
+        result_coloring &= graph_coloring(vertex_amount,  edge_amount, i + 1);
+        if (!result_coloring) break;
+        error = error | 1;
       break;
 
       case 0x7: // 111
         GRAPH.g_vertex[i].color = 0;
+        result_coloring &= graph_coloring(vertex_amount,  edge_amount, i + 1);
+        if (!result_coloring) break;
+        GRAPH.g_vertex[i].color = 1;
+        result_coloring &= graph_coloring(vertex_amount,  edge_amount, i + 1);
+        if (!result_coloring) break;
+        GRAPH.g_vertex[i].color = 2;
+        result_coloring &= graph_coloring(vertex_amount,  edge_amount, i + 1);
+        if (!result_coloring) break;
+        error = error | 1;
       break;
       default: error = error | 1; break;
     }
