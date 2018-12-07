@@ -96,6 +96,7 @@ int edge_uniqueness(int generated_edge)
 static int count_disconnect_vertex = 0;
   
 static int* connect_vertex = NULL;
+static int flag_two_vertex = 0;
 int vertex_check_connection(struct EDGE generated_edge, int vertex_amount)
 { 
   int c = 0;
@@ -116,7 +117,11 @@ int vertex_check_connection(struct EDGE generated_edge, int vertex_amount)
   for (i = 0; i < vertex_amount; ++i)
     if (connect_vertex[i] == 0)
       ++count_disconnect_vertex;
-
+  printf("%d\n", c);
+  if (c == 2) {
+    if (flag_two_vertex == 0) flag_two_vertex = 1;
+    else return 2;
+  }
   if (c == 0 && count_disconnect_vertex > 0)
     return 1;
 
@@ -242,7 +247,10 @@ void read_graph(int* edge_amount, int* vertex_amount, char* filename) {
     fscanf(graph_file, "%d", &r);
     GRAPH.g_edge[i].l_vertex = &GRAPH.g_vertex[search_vertex(l, _vertex_amount)];
     GRAPH.g_edge[i].r_vertex = &GRAPH.g_vertex[search_vertex(r, _vertex_amount)];      
-    vertex_check_connection(GRAPH.g_edge[i], _vertex_amount);
+    if (vertex_check_connection(GRAPH.g_edge[i], _vertex_amount) == 2) {
+      printf("%s[ERROR]%s:\t GRAPH is invalid!\n", RED, RESET);
+      exit(EXIT_FAILURE);
+    }
     if(edge_uniqueness(i) || (GRAPH.g_edge[i].l_vertex->number == GRAPH.g_edge[i].r_vertex->number)) {
       fprintf(stderr,"%s[ERROR]%s\tEdge %d -- %d\n", RED, RESET, l,r);
       exit(EXIT_FAILURE);
@@ -380,7 +388,7 @@ void graph_generation(int graph_choice)
   printf("\t%sCOLORLESS GRAPH:%s\n", CYAN, RESET);
   graph_samples(graph_choice, &vertex_amount, &edge_amount);
 //  init_color(vertex_amount,edge_amount);
-  if (graph_coloring(vertex_amount,edge_amount, 0)) {
+  if (graph_coloring(vertex_amount,edge_amount, 0) == 1) {
     printf("%s[ERROR]%s:\t GRAPH is invalid!\n", RED, RESET);
     graph_save(vertex_amount, edge_amount);
     exit(EXIT_FAILURE);
