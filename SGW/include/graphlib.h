@@ -29,7 +29,8 @@ struct EDGE {
 
 struct VERTEX {
   int number;
-  char* color;
+  int color;
+  char gcolor[256];
 } VERTEX;
 
 struct GRAPH {
@@ -46,10 +47,13 @@ void vertex_swap(int position);
 int edge_uniqueness(int generated_edge);
 int edge_generation(int vertex_amount, int edge_amount);
 // int graph_generation(int vertex_amount, int edge_amount);
+void init_graph(int edge_amount, int vertex_amount);
+int init_color(int vertex_amount);
+int init_check_connect(int vertex_amount);
 
-int color_uniqueness(int vertex_amount);
-void graph_coloring(int vertex_amount);
+int graph_coloring(int vertex_amount, int edge_amount,int cur_vertex);
 void graph_samples(int graph_choice, int* vertex_amount, int* edge_amount);
 void graph_generation(int graph_choice);
-
+int search_vertex(int v, int vertex_amount);
+void read_graph(int* edge_amount, int* vertex_amount, char* filename);
 #endif
