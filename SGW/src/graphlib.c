@@ -74,8 +74,8 @@ void generate_values() {
   for (i = 0 ; i < GRAPH.vertex_amount; ++i) {
     do {
       do {
-        generate_prime_number(2, 10, &GRAPH.g_vertex[i].rsa.P);
-        generate_prime_number(2, 10, &GRAPH.g_vertex[i].rsa.Q);
+        generate_prime_number(2, MAXINT, &GRAPH.g_vertex[i].rsa.P);
+        generate_prime_number(2, MAXINT, &GRAPH.g_vertex[i].rsa.Q);
      } while (GRAPH.g_vertex[i].rsa.P == GRAPH.g_vertex[i].rsa.Q);
 
       GRAPH.g_vertex[i].rsa.N = GRAPH.g_vertex[i].rsa.P * GRAPH.g_vertex[i].rsa.Q; 
@@ -459,7 +459,7 @@ void graph_generation(int graph_choice) {
   if (GRAPH.vertex_amount > MAXVERTEX) {
     fprintf(stderr, "%s[ERROR]%s\tVertexes overflow!\n", RED, RESET);
     exit(EXIT_FAILURE);
-  } else if (GRAPH.edge_amount > _MAXEDGE(GRAPH.vertex_amount) + 1) {
+  } else if (GRAPH.edge_amount > _MAXEDGE(GRAPH.vertex_amount)) {
     fprintf(stderr, "%s[ERROR]%s\tEdges overflow!\n", RED, RESET);
     exit(EXIT_FAILURE);
   } else if (GRAPH.edge_amount > GRAPH.vertex_amount*GRAPH.vertex_amount) {

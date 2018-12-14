@@ -20,8 +20,8 @@
 
 #define MAXVERTEX 1000
 #define MAXINT 1000
-#define MAXEDGE (((MAXVERTEX - 1)/2) * MAXVERTEX)
-#define _MAXEDGE(X) (((X - 1)/2) * X)
+#define MAXEDGE (((MAXVERTEX - 1) / 2) * MAXVERTEX)
+#define _MAXEDGE(X) (((X - 1) / 2) * X)
 
 typedef struct RSA {
   unsigned long int P;
