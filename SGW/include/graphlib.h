@@ -19,7 +19,7 @@
 #include "../include/hashtab.h"
 
 #define MAXVERTEX 1000
-#define MAXINT 10
+#define MAXINT 1000
 #define MAXEDGE (((MAXVERTEX - 1)/2) * MAXVERTEX)
 #define _MAXEDGE(X) (((X - 1)/2) * X)
 
@@ -29,6 +29,7 @@ typedef struct RSA {
   unsigned long int N;
   unsigned long int c;
   unsigned long int d;
+  unsigned long int Phi;
 } rsa_t;
 
 struct EDGE {
@@ -65,7 +66,7 @@ void init_graph();
 int init_color();
 int init_check_connect();
 int check_graph_coloring(int proof_amount);
-
+void generate_R(int i);
 int graph_coloring(int cur_vertex);
 void graph_samples(int graph_choice);
 void graph_generation(int graph_choice);

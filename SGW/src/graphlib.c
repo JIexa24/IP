@@ -42,7 +42,6 @@ void graph_save_graphviz(char* file) {
 }
 
 void generate_values() {
-  unsigned long int Phi = 0;
   unsigned long int euclid_res[3] = {0};
   int i = 0;
   int r = 0;
@@ -73,41 +72,41 @@ void generate_values() {
          new_color_array[3], new_associate_array[3], RESET);
 
   for (i = 0 ; i < GRAPH.vertex_amount; ++i) {
-    GRAPH.g_vertex[i].R = rand() % (3) + 1;
-    GRAPH.g_vertex[i].R = GRAPH.g_vertex[i].R << 2;
-    if (!strcmp(new_associate_array[GRAPH.g_vertex[i].color], "red")) {
-      GRAPH.g_vertex[i].R &= ~(0x3);
-      GRAPH.g_vertex[i].R |= 0x0;
-    } else if (!strcmp(new_associate_array[GRAPH.g_vertex[i].color], "green")) {
-      GRAPH.g_vertex[i].R &= ~(0x3);
-      GRAPH.g_vertex[i].R |= 0x1;
-    } else if (!strcmp(new_associate_array[GRAPH.g_vertex[i].color], "blue")) {
-      GRAPH.g_vertex[i].R &= ~(0x3);
-      GRAPH.g_vertex[i].R |= 0x2;
-    } else {
-      GRAPH.g_vertex[i].R |= 0x3;
-    }
-
-
     do {
-  //    do {
-        generate_prime_number(2, MAXINT, &GRAPH.g_vertex[i].rsa.P);
-        generate_prime_number(2, MAXINT, &GRAPH.g_vertex[i].rsa.Q);
-   //   } while (GRAPH.g_vertex[i].rsa.P == GRAPH.g_vertex[i].rsa.Q);
+      do {
+        generate_prime_number(2, 10, &GRAPH.g_vertex[i].rsa.P);
+        generate_prime_number(2, 10, &GRAPH.g_vertex[i].rsa.Q);
+     } while (GRAPH.g_vertex[i].rsa.P == GRAPH.g_vertex[i].rsa.Q);
 
       GRAPH.g_vertex[i].rsa.N = GRAPH.g_vertex[i].rsa.P * GRAPH.g_vertex[i].rsa.Q; 
-
-      Phi = (GRAPH.g_vertex[i].rsa.P - 1) * (GRAPH.g_vertex[i].rsa.Q - 1);
+      GRAPH.g_vertex[i].rsa.Phi = (GRAPH.g_vertex[i].rsa.P - 1) * (GRAPH.g_vertex[i].rsa.Q - 1);
 
       GRAPH.g_vertex[i].rsa.d = 3;//generate_mutually_prime_number(Phi , 1, MAXINT);
-      euclid(GRAPH.g_vertex[i].rsa.d, Phi, euclid_res);
-      GRAPH.g_vertex[i].rsa.c = euclid_res[0] % Phi;
-//      equlid(GRAPH.g_vertex[i].rsa.c, GRAPH.g_vertex[i].rsa.N, &GRAPH.g_vertex[i].rsa.c, NULL, NULL);
+      euclid(GRAPH.g_vertex[i].rsa.d, GRAPH.g_vertex[i].rsa.Phi, euclid_res);
+      GRAPH.g_vertex[i].rsa.c = euclid_res[0];
+      generate_R(i);
       expmod_func(GRAPH.g_vertex[i].R, GRAPH.g_vertex[i].rsa.d, GRAPH.g_vertex[i].rsa.N, &GRAPH.g_vertex[i].Z);
-      nod = (GRAPH.g_vertex[i].rsa.c * GRAPH.g_vertex[i].rsa.d) % Phi;
-    } while (GRAPH.g_vertex[i].rsa.d > 0xFF || GRAPH.g_vertex[i].rsa.d <= 1 || nod != 1);
+ 
+      nod = (GRAPH.g_vertex[i].rsa.c * GRAPH.g_vertex[i].rsa.d) % GRAPH.g_vertex[i].rsa.Phi;
+    } while (GRAPH.g_vertex[i].rsa.c > 0xFFFFFF || GRAPH.g_vertex[i].rsa.d <= 1 || nod != 1 || (GRAPH.g_vertex[i].Z == 0 && GRAPH.g_vertex[i].R != 0));
 
-    printf("Vertex #%d, nod(%lu)\tr=%s%lu %X %lu%s,\tP=%lu,\tQ=%lu,\tN=%lu,\tc=%lu,\td=%lu,\tZ=%lu\n", i + 1,nod, new_color_array[GRAPH.g_vertex[i].color], GRAPH.g_vertex[i].R, GRAPH.g_vertex[i].R, GRAPH.g_vertex[i].R & 0x3 , RESET, GRAPH.g_vertex[i].rsa.P, GRAPH.g_vertex[i].rsa.Q, GRAPH.g_vertex[i].rsa.N, GRAPH.g_vertex[i].rsa.c, GRAPH.g_vertex[i].rsa.d, GRAPH.g_vertex[i].Z);
+    printf("Vertex #%d, nod(%d)\tr=%s%lu %X %lu%s,\tP=%lu,\tQ=%lu,\tN=%lu,\tc=%lu,\td=%lu,\tZ=%lu\n", i + 1,nod, new_color_array[GRAPH.g_vertex[i].color], GRAPH.g_vertex[i].R, GRAPH.g_vertex[i].R, GRAPH.g_vertex[i].R & 0x3 , RESET, GRAPH.g_vertex[i].rsa.P, GRAPH.g_vertex[i].rsa.Q, GRAPH.g_vertex[i].rsa.N, GRAPH.g_vertex[i].rsa.c, GRAPH.g_vertex[i].rsa.d, GRAPH.g_vertex[i].Z);
+  }
+}
+
+void generate_R(int i) {
+  GRAPH.g_vertex[i].R = rand() % (GRAPH.g_vertex[i].rsa.Phi);
+  if (!strcmp(new_associate_array[GRAPH.g_vertex[i].color], "red")) {
+    GRAPH.g_vertex[i].R &= ~(0x3);
+    GRAPH.g_vertex[i].R |= 0x0;
+  } else if (!strcmp(new_associate_array[GRAPH.g_vertex[i].color], "green")) {
+    GRAPH.g_vertex[i].R &= ~(0x3);
+    GRAPH.g_vertex[i].R |= 0x1;
+  } else if (!strcmp(new_associate_array[GRAPH.g_vertex[i].color], "blue")) {
+    GRAPH.g_vertex[i].R &= ~(0x3);
+    GRAPH.g_vertex[i].R |= 0x2;
+  } else {
+    GRAPH.g_vertex[i].R |= 0x3;
   }
 }
 
@@ -514,7 +513,7 @@ int check_graph_coloring(int proof_amount) {
            new_color_array[right_color & 0x3], right_color, RESET, left_color & 0x3, right_color & 0x3);
     left_color &= 0x3;
     right_color &= 0x3;
-    printf("%d == %d\n", left_color , right_color);
+    printf("%lu == %lu\n", left_color , right_color);
     if (left_color == right_color) {
       error = error | 1;
       break;
