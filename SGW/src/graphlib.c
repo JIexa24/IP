@@ -41,6 +41,36 @@ void graph_save_graphviz(char* file) {
   system (cmd);
 }
 
+void graph_save_graphviz_Bob(char* file) {
+  FILE* graph_file;
+  char* filename = file;
+  char out[256] = "";
+  char cmd[256] = "dot -Tpng ";
+  strcat(out, filename);
+  strcat(out, ".png");
+  graph_file = fopen(filename,"w+");
+  if (graph_file == NULL) {
+    fprintf(stderr,"%s[ERROR]%s\tCan't open file:\t<%s>\n", RED, RESET, filename);
+    exit(EXIT_FAILURE);
+  }
+  fprintf(graph_file, "graph ipgraph {\n");
+  // print vertex config
+  for (int i = 0; i < GRAPH.vertex_amount; ++i)
+    fprintf(graph_file, "%d [label=\"%d\", color=\"%s\"];\n", i+1, i+1, new_associate_array[GRAPH.g_vertex[i].color]); 
+
+  // print edges
+  for (int i = 0; i < GRAPH.edge_amount; ++i)
+    fprintf(graph_file, "%d -- %d [label=\"%d_%d\", color=\"%s\"]\n",
+                        GRAPH.g_edge[i].l_vertex->number, GRAPH.g_edge[i].r_vertex->number, GRAPH.g_edge[i].l_vertex->number, GRAPH.g_edge[i].r_vertex->number, "orange"); 
+
+  fprintf(graph_file, "}\n");
+  fclose (graph_file);
+  strcat(cmd, filename);
+  strcat(cmd, " -o ");
+  strcat(cmd, out);
+  system (cmd);
+}
+
 void generate_values() {
   unsigned long int euclid_res[3] = {0};
   int i = 0;
@@ -496,7 +526,7 @@ int check_graph_coloring(int proof_amount) {
   unsigned long int left_color = 0;
   unsigned long int right_color = 0;
 
-  if (_proof_amount == 0) error = error | 1;
+  if (_proof_amount == 0) _proof_amount == GRAPH.edge_amount;
   while (_proof_amount > 0) {
     index_Bob = rand() % GRAPH.edge_amount;
     //send index to Alice
@@ -513,7 +543,7 @@ int check_graph_coloring(int proof_amount) {
            new_color_array[right_color & 0x3], right_color, RESET, left_color & 0x3, right_color & 0x3);
     left_color &= 0x3;
     right_color &= 0x3;
-    printf("%lu == %lu\n", left_color , right_color);
+//    printf("%lu == %lu\n", left_color , right_color);
     if (left_color == right_color) {
       error = error | 1;
       break;
@@ -521,6 +551,7 @@ int check_graph_coloring(int proof_amount) {
     --_proof_amount;
     ++success_proof;
   }
+  graph_save_graphviz_Bob("graph_bob.dot");
   printf("\nProofs amount : %d\n", proof_amount);
   printf("Success proofs: %s%d%s\n", GREEN, success_proof, RESET);
   return error;
